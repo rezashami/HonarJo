@@ -1,20 +1,9 @@
 package com.example.reza.honarjo.Model;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverter;
-import android.arch.persistence.room.TypeConverters;
-import android.support.annotation.NonNull;
-
-import com.example.reza.honarjo.Controller.db.DateConverter;
-
 import java.util.Date;
 
-@Entity(tableName = "user")
-@TypeConverters({DateConverter.class})
 public class User {
-    @PrimaryKey
-    @NonNull
+
     private String _id;
     private String name;
     private String family;
@@ -30,12 +19,12 @@ public class User {
     private boolean isPrivate;
     private boolean activity;
 
-    @NonNull
+
     public String get_id() {
         return _id;
     }
 
-    public void set_id(@NonNull String _id) {
+    public void set_id(String _id) {
         this._id = _id;
     }
 
