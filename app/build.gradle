@@ -30,6 +30,10 @@ dependencies {
     //retrofit 2
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    // JSON Parsing
+    implementation 'com.google.code.gson:gson:2.8.5'
     //font section
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
+    //Date converter
+    implementation 'com.github.samanzamani.persiandate:PersianDate:0.4'
 }

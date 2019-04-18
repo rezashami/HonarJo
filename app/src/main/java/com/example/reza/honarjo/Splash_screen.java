@@ -1,34 +1,95 @@
 package com.example.reza.honarjo;
 
+import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Window;
+import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
-import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
+import com.example.reza.honarjo.Controller.api.api;
+import com.example.reza.honarjo.Controller.api.appClient;
+import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
+import com.example.reza.honarjo.Model.LoginInformation;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class Splash_screen extends AppCompatActivity {
-
+    PreferenceManager preferenceManager;
+    private api apiInterface;
+    EditText user_name, password;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//        this.getWindow().setFlags(FLAG_FULLSCREEN, FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash_screen);
-        Thread myThread = new Thread()
+        preferenceManager =new PreferenceManager(getApplicationContext());
+        if (preferenceManager.getToken() != null)
         {
-            @Override
-            public void run() {
-                try {
-                    sleep(1200);
-                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            lunchMain();
+        }
+        else{
+            apiInterface = appClient.getInstance().create(api.class);
+            Button loginBtn = findViewById(R.id.login_btn);
+            user_name = findViewById(R.id.username);
+            password = findViewById(R.id.password);
+            loginBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String username = user_name.getText().toString();
+                    String pass = password.getText().toString();
+                    if (TextUtils.isEmpty(username))
+                    {
+                        Toast.makeText(getApplicationContext(),"لطفا اسم خود را درست وارد کنید.",Toast.LENGTH_LONG).show();
+                        user_name.requestFocus();
+                    }
+                    else if(TextUtils.isEmpty(pass))
+                    {
+                        Toast.makeText(getApplicationContext(),"لطفا رمز عبور خود را درست وارد کنید.",Toast.LENGTH_LONG).show();
+                        password.requestFocus();
+                    }
+                    else{
+                        LoginInformation loginInformation = new LoginInformation(username,pass);
+                        Call<String> call = apiInterface.login(loginInformation);
+                        call.enqueue(new Callback<String>() {
+                            @Override
+                            public void onResponse(Call<String> call, Response<String> response) {
+                                if(response.code() == 200)
+                                {
+                                    preferenceManager.addToken(response.body());
+                                    Toast.makeText(getApplicationContext(),"خوش آمدید",Toast.LENGTH_LONG).show();
+                                    lunchMain();
+                                }
+                                else{
+                                    Toast.makeText(getApplicationContext(),"ظاهرا مشکلی پیش آمده است",Toast.LENGTH_LONG).show();
+                                }
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<String> call, Throwable t) {
+                                t.printStackTrace();
+                                Toast.makeText(getApplicationContext(),"خظا در ارتباط!",Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
                 }
-            }
-        };
-        myThread.start();
+            });
+        }
+
+    }
+    private void lunchMain(){
+        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 }
