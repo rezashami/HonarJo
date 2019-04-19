@@ -1,21 +1,19 @@
 package com.example.reza.honarjo.Model;
 
-import java.util.Date;
-
 public class User {
 
     private String _id;
     private String name;
     private String family;
     private String phoneNumber;
-    private Date registerDay;
-    private Date expireDay;
-    private Date yellowDay;
-    private Date orangeDay;
-    private Date greenDay;
-    private Date blueDay;
-    private Date brownDay;
-    private Date blackDay;
+    private MyDate registerDay;
+    private MyDate expireDay;
+    private MyDate yellowDay;
+    private MyDate orangeDay;
+    private MyDate greenDay;
+    private MyDate blueDay;
+    private MyDate brownDay;
+    private MyDate blackDay;
     private boolean isPrivate;
     private boolean activity;
 
@@ -52,67 +50,67 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public Date getRegisterDay() {
+    public MyDate getRegisterDay() {
         return registerDay;
     }
 
-    public void setRegisterDay(Date registerDay) {
+    public void setRegisterDay(MyDate registerDay) {
         this.registerDay = registerDay;
     }
 
-    public Date getExpireDay() {
+    public MyDate getExpireDay() {
         return expireDay;
     }
 
-    public void setExpireDay(Date expireDay) {
+    public void setExpireDay(MyDate expireDay) {
         this.expireDay = expireDay;
     }
 
-    public Date getYellowDay() {
+    public MyDate getYellowDay() {
         return yellowDay;
     }
 
-    public void setYellowDay(Date yellowDay) {
+    public void setYellowDay(MyDate yellowDay) {
         this.yellowDay = yellowDay;
     }
 
-    public Date getOrangeDay() {
+    public MyDate getOrangeDay() {
         return orangeDay;
     }
 
-    public void setOrangeDay(Date orangeDay) {
+    public void setOrangeDay(MyDate orangeDay) {
         this.orangeDay = orangeDay;
     }
 
-    public Date getGreenDay() {
+    public MyDate getGreenDay() {
         return greenDay;
     }
 
-    public void setGreenDay(Date greenDay) {
+    public void setGreenDay(MyDate greenDay) {
         this.greenDay = greenDay;
     }
 
-    public Date getBlueDay() {
+    public MyDate getBlueDay() {
         return blueDay;
     }
 
-    public void setBlueDay(Date blueDay) {
+    public void setBlueDay(MyDate blueDay) {
         this.blueDay = blueDay;
     }
 
-    public Date getBrownDay() {
+    public MyDate getBrownDay() {
         return brownDay;
     }
 
-    public void setBrownDay(Date brownDay) {
+    public void setBrownDay(MyDate brownDay) {
         this.brownDay = brownDay;
     }
 
-    public Date getBlackDay() {
+    public MyDate getBlackDay() {
         return blackDay;
     }
 
-    public void setBlackDay(Date blackDay) {
+    public void setBlackDay(MyDate blackDay) {
         this.blackDay = blackDay;
     }
 

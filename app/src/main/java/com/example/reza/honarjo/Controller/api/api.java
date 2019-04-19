@@ -2,6 +2,7 @@ package com.example.reza.honarjo.Controller.api;
 
 import com.example.reza.honarjo.Model.Insurance;
 import com.example.reza.honarjo.Model.LoginInformation;
+import com.example.reza.honarjo.Model.User;
 
 import java.util.List;
 
@@ -20,4 +21,7 @@ public interface api {
     @Headers("Content-Type: application/json")
     @POST("/login")
     Call<String> login(@Body LoginInformation body);
+    @Headers("Content-Type: application/json")
+    @GET("/users")
+    Call<List<User>> getAllUsers(@Header("token") String token);
 }

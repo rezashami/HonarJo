@@ -6,4 +6,5 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">تنظیمات</string>
     <string name="today_bime">بیمه‌های امروز</string>
+    <string name="title_activity_user_list">مدیریت کاربرها</string>
 </resources>

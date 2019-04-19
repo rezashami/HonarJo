@@ -1,4 +1,4 @@
-package com.example.reza.honarjo.Controller.todayRecycler;
+package com.example.reza.honarjo.Controller.recyclerAdapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,42 +8,36 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.reza.honarjo.Model.Insurance;
+import com.example.reza.honarjo.Model.User;
 import com.example.reza.honarjo.R;
 
 import java.util.List;
 
-import saman.zamani.persiandate.PersianDate;
-
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>  {
+public class OnlineRecyclerAdapter extends RecyclerView.Adapter<OnlineRecyclerAdapter.ViewHolder>  {
 
 
-    private List<Insurance> insurances;
+    private List<User> insurances;
 
-    public RecyclerAdapter(List<Insurance> mInsurances) {
+    public OnlineRecyclerAdapter(List<User> mInsurances) {
         insurances = mInsurances;
     }
     @NonNull
     @Override
-    public RecyclerAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+    public OnlineRecyclerAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
-        // Inflate the custom layout
         View contactView = inflater.inflate(R.layout.today_recycler_row, parent, false);
-
-        // Return a new holder instance
         return new ViewHolder(contactView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerAdapter.ViewHolder viewHolder, int i) {
-        Insurance insurance = insurances.get(i);
+    public void onBindViewHolder(@NonNull OnlineRecyclerAdapter.ViewHolder viewHolder, int i) {
+        User insurance = insurances.get(i);
         TextView expire = viewHolder.expire;
         TextView name = viewHolder.name;
-        expire.setText(insurance.getName() + " "+insurance.getFamily());
-        PersianDate pdate = new PersianDate(insurance.getExpireDay().getTime());
-        name.setText(pdate.toString());
+        name.setText(insurance.getName() + " "+insurance.getFamily());
+        //PersianDate pdate = new PersianDate(insurance.getExpireDay().getTime());
+        expire.setText(insurance.getExpireDay().toString());
     }
 
     @Override
@@ -54,7 +48,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         TextView name;
         TextView expire;
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.today_text_name);
             expire = itemView.findViewById(R.id.today_text_expire);

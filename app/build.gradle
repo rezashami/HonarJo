@@ -16,6 +16,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
 }
 
 dependencies {
@@ -36,4 +40,7 @@ dependencies {
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
     //Date converter
     implementation 'com.github.samanzamani.persiandate:PersianDate:0.4'
+    //LifeCycle
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation "android.arch.lifecycle:viewmodel:1.1.1"
 }

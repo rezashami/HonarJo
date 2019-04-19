@@ -8,6 +8,7 @@ public class PreferenceManager {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor spEditor;
     private static final String TOKEN = "tokenKey";
+    private static final String FIRST_LAUNCH = "firstLaunch";
     private static final String PREFERENCE = "MyPrefs";
 
     @SuppressLint("CommitPrefEdits")
@@ -23,5 +24,14 @@ public class PreferenceManager {
 
     public String getToken() {
         return sharedPreferences.getString(TOKEN, null);
+    }
+
+    public void setFirstTimeLaunch(boolean isFirstTime) {
+        spEditor.putBoolean(FIRST_LAUNCH, isFirstTime);
+        spEditor.commit();
+    }
+
+    public boolean FirstLaunch() {
+        return sharedPreferences.getBoolean(FIRST_LAUNCH, true);
     }
 }
