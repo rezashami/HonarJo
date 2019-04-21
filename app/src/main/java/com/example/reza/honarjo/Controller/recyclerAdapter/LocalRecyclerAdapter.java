@@ -37,8 +37,8 @@ public class LocalRecyclerAdapter extends RecyclerView.Adapter<LocalRecyclerAdap
         DBUSer current = dbUsers.get(position);
         holder.hour.setText(String.valueOf(current.getName()) +" "+ String.valueOf(current.getFamily()));
     }
-    public void setDbUsers(List<DBUSer> words) {
-        dbUsers = words;
+    public void setDbUsers(List<DBUSer> users) {
+        dbUsers = users;
         notifyDataSetChanged();
     }
 

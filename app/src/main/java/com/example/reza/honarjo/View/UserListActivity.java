@@ -1,5 +1,6 @@
 package com.example.reza.honarjo.View;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,12 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
-import android.arch.lifecycle.ViewModelProviders;
+import android.view.Window;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.reza.honarjo.Controller.DBUser.UserViewModel;
 import com.example.reza.honarjo.Controller.recyclerAdapter.LocalRecyclerAdapter;
-import com.example.reza.honarjo.Model.DBUSer;
 import com.example.reza.honarjo.R;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -47,6 +50,11 @@ public class UserListActivity extends AppCompatActivity {
 
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
         userViewModel.getAllWords().observe(this, adapter::setDbUsers);
+        userViewModel.getIsLoading().observe(this, isLoading -> {
+            if (isLoading!= null)
+                if (isLoading)
+                    Toast.makeText(getApplicationContext(), "منتظر بمانید...", Toast.LENGTH_SHORT).show();
+        });
     }
     @Override
     protected void attachBaseContext(Context newBase) {

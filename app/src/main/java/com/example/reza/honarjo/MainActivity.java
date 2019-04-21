@@ -26,6 +26,7 @@ import com.example.reza.honarjo.Controller.recyclerAdapter.LocalRecyclerAdapter;
 import com.example.reza.honarjo.Controller.recyclerAdapter.OnlineRecyclerAdapter;
 import com.example.reza.honarjo.Model.DBUSer;
 import com.example.reza.honarjo.Model.User;
+import com.example.reza.honarjo.View.ShowUser;
 import com.example.reza.honarjo.View.UserListActivity;
 
 import java.util.List;

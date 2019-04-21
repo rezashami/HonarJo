@@ -3,25 +3,36 @@ package com.example.reza.honarjo.Controller.DBUser;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.example.reza.honarjo.Model.DBUSer;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-public class UserViewModel  extends AndroidViewModel {
+public class UserViewModel extends AndroidViewModel {
 
     private UserRepository mRepository;
 
-    private LiveData<List<DBUSer>> alarms;
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
+
+    public MutableLiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
 
     public UserViewModel(@NonNull Application application) {
         super(application);
         mRepository = new UserRepository(application);
-        alarms = mRepository.getAlarms();
     }
     public LiveData<List<DBUSer>> getAllWords() {
-        return alarms;
+        LiveData<List<DBUSer>> users= null;
+        try {
+            users = mRepository.getUsers(isLoading);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return users;
     }
 
     public void insert(DBUSer dbuSer) {
