@@ -38,9 +38,13 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     //font section
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
-    //Date converter
-    implementation 'com.github.samanzamani.persiandate:PersianDate:0.4'
     //LifeCycle
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation "android.arch.lifecycle:viewmodel:1.1.1"
+
+    //Material Search bar
+    implementation 'com.github.mancj:MaterialSearchBar:0.8.2'
+
+    //Persian Date
+    implementation 'com.github.samanzamani.persiandate:PersianDate:0.7'
 }

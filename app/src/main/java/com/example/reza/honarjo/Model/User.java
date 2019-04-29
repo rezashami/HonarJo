@@ -1,10 +1,15 @@
 package com.example.reza.honarjo.Model;
 
+import android.support.annotation.Nullable;
+
+import com.google.gson.annotations.SerializedName;
+
 public class User {
 
     private String _id;
     private String name;
     private String family;
+    @SerializedName("mobileNumber")
     private String phoneNumber;
     private MyDate registerDay;
     private MyDate expireDay;
@@ -17,6 +22,20 @@ public class User {
     private boolean isPrivate;
     private boolean activity;
 
+    public User(String name, String family, String phoneNumber, MyDate registerDay, MyDate expireDay, MyDate yellowDay, MyDate orangeDay, MyDate greenDay, MyDate blueDay, MyDate brownDay, MyDate blackDay, boolean isPrivate) {
+        this.name = name;
+        this.family = family;
+        this.phoneNumber = phoneNumber;
+        this.registerDay = registerDay;
+        this.expireDay = expireDay;
+        this.yellowDay = yellowDay;
+        this.orangeDay = orangeDay;
+        this.greenDay = greenDay;
+        this.blueDay = blueDay;
+        this.brownDay = brownDay;
+        this.blackDay = blackDay;
+        this.isPrivate = isPrivate;
+    }
 
     public String get_id() {
         return _id;

@@ -1,7 +1,9 @@
 package com.example.reza.honarjo.Controller.api;
 
+import com.example.reza.honarjo.Model.DeleteId;
 import com.example.reza.honarjo.Model.Insurance;
 import com.example.reza.honarjo.Model.LoginInformation;
+import com.example.reza.honarjo.Model.UpdateUser;
 import com.example.reza.honarjo.Model.User;
 
 import java.util.List;
@@ -14,14 +16,28 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 public interface api {
-//    @GET("/login")
+    //    @GET("/login")
 //    Call<List<Insurance>> getInsurances(@Header("token") String token);
 //    @POST("/login")
 //    Call<LoginResponse> loginJSON(@Body LoginInfo body);
     @Headers("Content-Type: application/json")
     @POST("/login")
     Call<String> login(@Body LoginInformation body);
+
     @Headers("Content-Type: application/json")
     @GET("/users")
     Call<List<User>> getAllUsers(@Header("token") String token);
+
+    @Headers("Content-Type: application/json")
+    @POST("/users/newuser")
+    Call<User> addNewUser(@Header("token") String token, @Body User user);
+
+    @Headers("Content-Type: application/json")
+    @POST("/users/update")
+    Call<User> updateUser(@Header("token") String token, @Body UpdateUser user);
+
+    @Headers("Content-Type: application/json")
+    @POST("/users/delete")
+    Call<User> deleteUser(@Header("token") String token, @Body DeleteId user);
+
 }

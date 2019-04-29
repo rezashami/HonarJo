@@ -7,40 +7,54 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.example.reza.honarjo.Model.DBUSer;
+import com.example.reza.honarjo.Model.ShowingUser;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class UserViewModel extends AndroidViewModel {
 
     private UserRepository mRepository;
-
-    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
-
-    public MutableLiveData<Boolean> getIsLoading() {
-        return isLoading;
-    }
+    private LiveData<List<ShowingUser>> users;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
         mRepository = new UserRepository(application);
     }
-    public LiveData<List<DBUSer>> getAllWords() {
-        LiveData<List<DBUSer>> users= null;
+
+    public LiveData<List<ShowingUser>> getAllWords() {
+        users = null;
         try {
-            users = mRepository.getUsers(isLoading);
+            users = mRepository.getUsers();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
         return users;
     }
 
+    public LiveData<List<ShowingUser>> getUsersByName(String query) {
+        LiveData<List<ShowingUser>> myUsers = null;
+        try {
+            myUsers = mRepository.getUsersByName(query);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return myUsers;
+    }
+
     public void insert(DBUSer dbuSer) {
         mRepository.insert(dbuSer);
     }
-    public void update(DBUSer dbuSer)
-    {
+
+    public void update(DBUSer dbuSer) {
         mRepository.update(dbuSer);
     }
-    public void remove(DBUSer dbuSer){mRepository.remove(dbuSer);}
+
+    public void remove(DBUSer dbuSer) {
+        mRepository.remove(dbuSer);
+    }
+
+
 }

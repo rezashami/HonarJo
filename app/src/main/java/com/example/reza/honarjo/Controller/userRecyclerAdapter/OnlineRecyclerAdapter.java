@@ -1,4 +1,4 @@
-package com.example.reza.honarjo.Controller.recyclerAdapter;
+package com.example.reza.honarjo.Controller.userRecyclerAdapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

@@ -1,15 +1,11 @@
 package com.example.reza.honarjo.Model;
 
 import java.io.Serializable;
-import java.util.List;
 
-public class Insurance implements Serializable {
-
+public class ShowingUser implements Serializable {
     private String _id;
     private String name;
     private String family;
-    private List<Integer> expireDay;
-
 
     public String get_id() {
         return _id;
@@ -33,13 +29,5 @@ public class Insurance implements Serializable {
 
     public void setFamily(String family) {
         this.family = family;
-    }
-
-    public List<Integer> getExpireDay() {
-        return expireDay;
-    }
-
-    public void setExpireDay(List<Integer> expireDay) {
-        this.expireDay = expireDay;
     }
 }

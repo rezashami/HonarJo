@@ -7,4 +7,21 @@
     <string name="action_settings">تنظیمات</string>
     <string name="today_bime">بیمه‌های امروز</string>
     <string name="title_activity_user_list">مدیریت کاربرها</string>
+    <string name="name">نام</string>
+    <string name="family">نام خانوادگی</string>
+    <string name="name_family">نام و نام خانوادگی: </string>
+    <string name="phone_number">شماره تماس: </string>
+    <string name="register_day">تاریخ ثبت‌نام: </string>
+    <string name="day">روز</string>
+    <string name="month">ماه</string>
+    <string name="year">سال</string>
+    <string name="expire_day">تاریخ انقضای بیمه: </string>
+    <string name="yellow_day">تاریخ کمربند زرد: </string>
+    <string name="orange_day">تاریخ کمربند نارنجی: </string>
+    <string name="green_day">تاریخ کمربند سبز: </string>
+    <string name="blue_day">تاریخ کمربند آبی: </string>
+    <string name="brown_day">تاریخ کمربند قهوه‌ای: </string>
+    <string name="black_day">تاریخ کمربند سیاه: </string>
+    <string name="private_check">عضویت در کلاس خصوصی: </string>
+    <string name="search_hint">جست و جو کاربر</string>
 </resources>

@@ -22,10 +22,11 @@ import com.example.reza.honarjo.Controller.DBUser.UserViewModel;
 import com.example.reza.honarjo.Controller.api.api;
 import com.example.reza.honarjo.Controller.api.appClient;
 import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
-import com.example.reza.honarjo.Controller.recyclerAdapter.LocalRecyclerAdapter;
-import com.example.reza.honarjo.Controller.recyclerAdapter.OnlineRecyclerAdapter;
+import com.example.reza.honarjo.Controller.userRecyclerAdapter.LocalRecyclerAdapter;
+import com.example.reza.honarjo.Controller.userRecyclerAdapter.OnlineRecyclerAdapter;
 import com.example.reza.honarjo.Model.DBUSer;
 import com.example.reza.honarjo.Model.User;
+import com.example.reza.honarjo.View.InsuranceListActivity;
 import com.example.reza.honarjo.View.ShowUser;
 import com.example.reza.honarjo.View.UserListActivity;
 
@@ -123,6 +124,8 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(MainActivity.this,UserListActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_bime) {
+            Intent intent = new Intent(MainActivity.this,InsuranceListActivity.class);
+            startActivity(intent);
 
         }else if (id == R.id.nav_share) {
 

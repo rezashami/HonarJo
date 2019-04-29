@@ -191,6 +191,7 @@ public class DBUSer  implements Serializable {
         this.privateCheck = privateCheck;
     }
 
+    @NonNull
     @Ignore
     @Override
     public String toString() {
