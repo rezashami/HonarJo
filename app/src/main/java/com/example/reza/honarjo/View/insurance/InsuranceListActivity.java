@@ -1,4 +1,4 @@
-package com.example.reza.honarjo.View;
+package com.example.reza.honarjo.View.insurance;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;

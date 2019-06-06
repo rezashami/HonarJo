@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:layoutDirection="rtl"
     android:textDirection="rtl"
-    tools:context=".View.UserListActivity">
+    tools:context=".View.user.UserListActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -26,9 +26,7 @@
         android:id="@+id/insurance_content_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="55dp"
-        android:layout_marginEnd="16dp"
         tools:listitem="@layout/recycler_row_insurance">
 
     </android.support.v7.widget.RecyclerView>

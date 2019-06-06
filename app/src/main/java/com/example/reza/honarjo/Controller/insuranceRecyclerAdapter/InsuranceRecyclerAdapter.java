@@ -4,12 +4,14 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.reza.honarjo.Model.Insurance;
+import com.example.reza.honarjo.Model.alarm.DBAlarm;
+import com.example.reza.honarjo.Model.users.ShowingUser;
 import com.example.reza.honarjo.R;
 
 import java.util.Collections;
@@ -22,11 +24,11 @@ public class InsuranceRecyclerAdapter extends RecyclerView.Adapter<InsuranceRecy
     private final OnInsuranceClickListener listener;
 
     public interface OnInsuranceClickListener {
-        void onItemClick(Insurance item);
+        void onItemClick(DBAlarm item);
     }
 
     private final LayoutInflater mInflater;
-    private List<Insurance> insurances = Collections.emptyList();
+    private List<DBAlarm> insurances = Collections.emptyList();
 
     public InsuranceRecyclerAdapter(Context context, OnInsuranceClickListener mListener) {
         mInflater = LayoutInflater.from(context);
@@ -61,23 +63,27 @@ public class InsuranceRecyclerAdapter extends RecyclerView.Adapter<InsuranceRecy
     }
 
     private String getDayString(List<Integer> input) {
-        if (input == null ||input.size()==0)
+        if (input == null || input.size() == 0)
             return "ثبت نشده";
         String month = input.get(1) < 10 ? "0" + input.get(1) : input.get(1).toString();
-        String day = input.get(0) < 10 ? "0" + input.get(0) : input.get(0).toString();
-        return toPersianNumber(input.get(2).toString() + " - " + month + " - " + day);
+        String day = input.get(2) < 10 ? "0" + input.get(2) : input.get(2).toString();
+        return toPersianNumber(input.get(0).toString() + " - " + month + " - " + day);
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull InsuranceRecyclerAdapter.LocalViewHolder localViewHolder, int i) {
         localViewHolder.bind(insurances.get(i), listener);
-        Insurance current = insurances.get(i);
-        localViewHolder.name_family.setText(String.valueOf(current.getName()) + " " + String.valueOf(current.getFamily()));
-        localViewHolder.expireDay.setText(getDayString(current.getExpireDay()));
+        DBAlarm current = insurances.get(i);
+        StringBuilder temp = new StringBuilder();
+        for (ShowingUser showingUser : current.getUsers()) {
+            temp.append(showingUser.getName()).append(" ").append(showingUser.getFamily()).append("\n");
+        }
+        localViewHolder.name_family.setText(temp.toString());
+        localViewHolder.expireDay.setText(getDayString(current.getMyDate()));
     }
 
-    public void setInsurances(List<Insurance> users) {
+    public void setInsurances(List<DBAlarm> users) {
         insurances = users;
         notifyDataSetChanged();
     }
@@ -95,11 +101,10 @@ public class InsuranceRecyclerAdapter extends RecyclerView.Adapter<InsuranceRecy
             super(itemView);
             name_family = itemView.findViewById(R.id.insurance_user_name_in_row);
             expireDay = itemView.findViewById(R.id.insurance_expire_day_in_row);
-            ;
         }
 
-        void bind(Insurance dbUsers, InsuranceRecyclerAdapter.OnInsuranceClickListener listener) {
-            itemView.setOnClickListener(v -> listener.onItemClick(dbUsers));
+        void bind(DBAlarm dbAlarm, InsuranceRecyclerAdapter.OnInsuranceClickListener listener) {
+            itemView.setOnClickListener(v -> listener.onItemClick(dbAlarm));
         }
     }
 }

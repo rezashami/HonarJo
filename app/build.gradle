@@ -47,4 +47,7 @@ dependencies {
 
     //Persian Date
     implementation 'com.github.samanzamani.persiandate:PersianDate:0.7'
+
+    //ssp size
+    implementation 'com.intuit.ssp:ssp-android:1.0.6'
 }

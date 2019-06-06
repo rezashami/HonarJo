@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.reza.honarjo.Model.ShowingUser;
+import com.example.reza.honarjo.Model.users.ShowingUser;
 import com.example.reza.honarjo.R;
 
 import java.util.Collections;

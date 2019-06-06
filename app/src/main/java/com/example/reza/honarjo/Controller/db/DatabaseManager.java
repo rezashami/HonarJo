@@ -6,10 +6,11 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
-import com.example.reza.honarjo.Model.DBUSer;
+import com.example.reza.honarjo.Model.alarm.DBAlarm;
+import com.example.reza.honarjo.Model.users.DBUSer;
 
-@Database(entities = {DBUSer.class},exportSchema = false, version = 1)
-@TypeConverters({ListConverter.class})
+@Database(entities = {DBUSer.class, DBAlarm.class},exportSchema = false, version = 1)
+@TypeConverters({ListConverter.class, UserListConverter.class})
 public abstract class DatabaseManager  extends RoomDatabase {
     public abstract DaoAccess daoAccess();
 

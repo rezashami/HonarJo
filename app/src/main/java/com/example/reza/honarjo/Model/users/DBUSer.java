@@ -1,4 +1,4 @@
-package com.example.reza.honarjo.Model;
+package com.example.reza.honarjo.Model.users;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
@@ -7,6 +7,7 @@ import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
 import com.example.reza.honarjo.Controller.db.ListConverter;
+import com.example.reza.honarjo.Model.MyDate;
 
 import java.io.Serializable;
 import java.util.List;
@@ -15,7 +16,7 @@ import static java.lang.String.valueOf;
 
 @Entity(tableName = "users")
 @TypeConverters({ListConverter.class})
-public class DBUSer  implements Serializable {
+public class DBUSer implements Serializable {
     @PrimaryKey
     @NonNull
     private String _id;
@@ -37,24 +38,25 @@ public class DBUSer  implements Serializable {
     }
 
     @Ignore
-    public DBUSer(User item){
+    public DBUSer(User item) {
         this._id = item.get_id();
         this.name = item.getName();
         this.family = item.getFamily();
         this.phoneNumber = item.getPhoneNumber();
 
-        this.registerDay = item.getRegisterDay() != null?item.getRegisterDay().getNumeric():null;
-        this.expireDay = item.getExpireDay() != null?item.getExpireDay().getNumeric():null;
-        this.yellowDay = item.getYellowDay() != null?item.getYellowDay().getNumeric():null;
-        this.orangeDay = item.getOrangeDay() != null?item.getOrangeDay().getNumeric():null;
-        this.greenDay = item.getGreenDay() != null?item.getGreenDay().getNumeric():null;
-        this.blueDay = item.getBlueDay() != null?item.getBlueDay().getNumeric():null;
-        this.brownDay = item.getBrownDay() != null?item.getBrownDay().getNumeric():null;
-        this.blackDay = item.getBlackDay() != null?item.getBlackDay().getNumeric():null;
+        this.registerDay = item.getRegisterDay() != null ? item.getRegisterDay().getNumeric() : null;
+        this.expireDay = item.getExpireDay() != null ? item.getExpireDay().getNumeric() : null;
+        this.yellowDay = item.getYellowDay() != null ? item.getYellowDay().getNumeric() : null;
+        this.orangeDay = item.getOrangeDay() != null ? item.getOrangeDay().getNumeric() : null;
+        this.greenDay = item.getGreenDay() != null ? item.getGreenDay().getNumeric() : null;
+        this.blueDay = item.getBlueDay() != null ? item.getBlueDay().getNumeric() : null;
+        this.brownDay = item.getBrownDay() != null ? item.getBrownDay().getNumeric() : null;
+        this.blackDay = item.getBlackDay() != null ? item.getBlackDay().getNumeric() : null;
         this.privateCheck = item.getIsPrivate();
         this.activity = item.isActivity();
 
     }
+
     @NonNull
     public String get_id() {
         return _id;
@@ -162,25 +164,25 @@ public class DBUSer  implements Serializable {
 
     @Ignore
     public String toPersianNumber(String text) {
-        String[] persianNumbers = new String[]{ "۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹" };
+        String[] persianNumbers = new String[]{"۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"};
         if (text.length() == 0) {
             return "";
         }
-        String out = "";
+        StringBuilder out = new StringBuilder();
         int length = text.length();
         for (int i = 0; i < length; i++) {
             char c = text.charAt(i);
             if ('0' <= c && c <= '9') {
                 int number = Integer.parseInt(valueOf(c));
-                out += persianNumbers[number];
+                out.append(persianNumbers[number]);
             } else if (c == '٫') {
-                out += '،';
+                out.append('،');
             } else {
-                out += c;
+                out.append(c);
             }
         }
 
-        return out;
+        return out.toString();
     }
 
     public boolean isPrivateCheck() {
@@ -189,6 +191,11 @@ public class DBUSer  implements Serializable {
 
     public void setPrivateCheck(boolean privateCheck) {
         this.privateCheck = privateCheck;
+    }
+
+    @Ignore
+    MyDate getMyDate(List<Integer> integers) {
+        return (integers == null || integers.size() == 0)?null:new MyDate(integers.get(0),integers.get(1),integers.get(2));
     }
 
     @NonNull

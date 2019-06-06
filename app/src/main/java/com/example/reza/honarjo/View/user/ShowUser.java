@@ -1,15 +1,14 @@
-package com.example.reza.honarjo.View;
+package com.example.reza.honarjo.View.user;
 
-import android.app.Application;
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -24,14 +23,13 @@ import com.example.reza.honarjo.Controller.api.appClient;
 import com.example.reza.honarjo.Controller.db.DaoAccess;
 import com.example.reza.honarjo.Controller.db.DatabaseManager;
 import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
-import com.example.reza.honarjo.Model.DBUSer;
-import com.example.reza.honarjo.Model.DeleteId;
-import com.example.reza.honarjo.Model.ShowingUser;
-import com.example.reza.honarjo.Model.User;
+import com.example.reza.honarjo.Model.users.DBUSer;
+import com.example.reza.honarjo.Model.users.DeleteId;
+import com.example.reza.honarjo.Model.users.ShowingUser;
 import com.example.reza.honarjo.R;
 
+import java.net.InetAddress;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import retrofit2.Call;
@@ -63,9 +61,8 @@ public class ShowUser extends AppCompatActivity {
         Bundle b = this.getIntent().getExtras();
         if (b != null) {
             showingUser = (ShowingUser) b.getSerializable("User");
-            Log.e("DBUSER", showingUser.toString());
             try {
-                dbuSer = new GetAsync(showingUser.get_id(),AppDao).execute().get();
+                dbuSer = new GetAsync(showingUser.get_id(), AppDao).execute().get();
                 renderUI();
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
@@ -74,10 +71,11 @@ public class ShowUser extends AppCompatActivity {
 
     }
 
-    private static class GetAsync extends AsyncTask<Void,Void,DBUSer>{
+    private static class GetAsync extends AsyncTask<Void, Void, DBUSer> {
         final String ID;
         final DaoAccess AppDao;
-        public GetAsync(String id, DaoAccess appDao) {
+
+        GetAsync(String id, DaoAccess appDao) {
             ID = id;
             AppDao = appDao;
         }
@@ -88,8 +86,9 @@ public class ShowUser extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     public void renderUI() {
-        assert dbuSer!=null;
+        assert dbuSer != null;
         nameFamily = findViewById(R.id.show_user_name_family);
         nameFamily.setText(dbuSer.getName() + " " + dbuSer.getFamily());
         phoneNumber = findViewById(R.id.show_user_phone_number);
@@ -117,9 +116,12 @@ public class ShowUser extends AppCompatActivity {
     private String getDayString(List<Integer> input) {
         if (input == null)
             return "ثبت نشده";
+        if (input.size() == 0)
+            return "ثبت نشده";
+        Log.e("SHowUSer", input.toString());
         String month = input.get(1) < 10 ? "0" + input.get(1) : input.get(1).toString();
         String day = input.get(0) < 10 ? "0" + input.get(0) : input.get(0).toString();
-        return toPersianNumber(input.get(2).toString() + " - " +month +" - " + day);
+        return toPersianNumber(input.get(2).toString() + " - " + month + " - " + day);
     }
 
     public String toPersianNumber(String text) {
@@ -127,19 +129,19 @@ public class ShowUser extends AppCompatActivity {
         if (text.length() == 0) {
             return "";
         }
-        String out = "";
+        StringBuilder out = new StringBuilder();
         int length = text.length();
         for (int i = 0; i < length; i++) {
             char c = text.charAt(i);
             if ('0' <= c && c <= '9') {
                 int number = Integer.parseInt(valueOf(c));
-                out += persianNumbers[number];
-            }else {
-                out += c;
+                out.append(persianNumbers[number]);
+            } else {
+                out.append(c);
             }
         }
 
-        return out;
+        return out.toString();
     }
 
     @Override
@@ -164,34 +166,52 @@ public class ShowUser extends AppCompatActivity {
 
     }
 
+    public boolean isInternetAvailable() {
+        try {
+            InetAddress ipAddr = InetAddress.getByName("google.com");
+            //You can replace it with your name
+            return !ipAddr.equals("");
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private void delete() {
-        Objects.requireNonNull(getSupportActionBar()).hide();
+        if (!isInternetAvailable()) {
+            Toast.makeText(this, "اتصال به اینترنت برقرار نمی‌باشد", Toast.LENGTH_SHORT).show();
+            return;
+        }
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("ویرایش اطلاعات");
-        alert.setMessage("آیا تغییرات ذخیره شوند؟");
+        alert.setTitle("حذف کاربر");
+        alert.setMessage("آیا مطمئنید؟");
         alert.setPositiveButton("بلی", (dialogInterface, i) -> {
+            Intent reply = new Intent();
             api apiInterface = appClient.getInstance().create(api.class);
-            Call<User> call = apiInterface.deleteUser(preferenceManager.getToken(),new DeleteId(dbuSer.get_id()));
-            call.enqueue(new Callback<User>() {
+            Call<String> call = apiInterface.deleteUser(preferenceManager.getToken(), new DeleteId(dbuSer.get_id()));
+            call.enqueue(new Callback<String>() {
                 @Override
-                public void onResponse(Call<User> call, Response<User> response) {
+                public void onResponse(Call<String> call, Response<String> response) {
+
                     if (response.code() == 200 && response.body() != null) {
                         UserViewModel userViewModel = ViewModelProviders.of(ShowUser.this).get(UserViewModel.class);
                         userViewModel.remove(dbuSer);
-                        //setResult(RESULT_OK, reply);
+                        Log.e("Response 200", response.toString());
+                        setResult(RESULT_OK, reply);
                         finish();
                     } else {
-                        Log.e("Response", response.toString());
+                        Log.e("Response ---", response.toString());
                         Toast.makeText(getApplicationContext(), "خطا در گرفتن پاسخ", Toast.LENGTH_SHORT).show();
-                        //setResult(RESULT_CANCELED, reply);
+                        setResult(RESULT_CANCELED, reply);
                         finish();
                     }
                 }
 
                 @Override
-                public void onFailure(Call<User> call, Throwable t) {
+                public void onFailure(Call<String> call, Throwable t) {
                     Toast.makeText(getApplicationContext(), "خطا در برقراری ارتباط", Toast.LENGTH_SHORT).show();
-                    //setResult(RESULT_CANCELED, reply);
+                    Log.e("Response", t.getMessage());
+                    setResult(RESULT_CANCELED, reply);
                     finish();
                 }
             });
@@ -202,9 +222,10 @@ public class ShowUser extends AppCompatActivity {
 
     private void edit() {
         Intent myIntent = new Intent(getApplicationContext(), EditUser.class);
-        myIntent.putExtra("User",dbuSer);
+        myIntent.putExtra("User", dbuSer);
         startActivityForResult(myIntent, EDIT_USER_REQUEST_CODE);
     }
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -214,11 +235,9 @@ public class ShowUser extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == EDIT_USER_REQUEST_CODE && resultCode == RESULT_OK){
+        if (requestCode == EDIT_USER_REQUEST_CODE && resultCode == RESULT_OK) {
             //save and edit user online
-        }
-        else if (requestCode == EDIT_USER_REQUEST_CODE && resultCode == RESULT_CANCELED)
-        {
+        } else if (requestCode == EDIT_USER_REQUEST_CODE && resultCode == RESULT_CANCELED) {
             Toast.makeText(getApplicationContext(), "تغییری اعمال نشد!", Toast.LENGTH_SHORT).show();
         }
     }

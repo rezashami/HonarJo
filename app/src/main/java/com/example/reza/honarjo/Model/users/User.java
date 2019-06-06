@@ -1,7 +1,8 @@
-package com.example.reza.honarjo.Model;
+package com.example.reza.honarjo.Model.users;
 
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 
+import com.example.reza.honarjo.Model.MyDate;
 import com.google.gson.annotations.SerializedName;
 
 public class User {
@@ -36,6 +37,23 @@ public class User {
         this.blackDay = blackDay;
         this.isPrivate = isPrivate;
     }
+
+    public User(DBUSer dbuSer) {
+        this.name = dbuSer.getName();
+        this.family = dbuSer.getFamily();
+        this.phoneNumber = dbuSer.getPhoneNumber();
+        this.registerDay = dbuSer.getMyDate(dbuSer.getRegisterDay());
+        this.expireDay = dbuSer.getMyDate(dbuSer.getExpireDay());
+        this.yellowDay = dbuSer.getMyDate(dbuSer.getYellowDay());
+        this.orangeDay = dbuSer.getMyDate(dbuSer.getOrangeDay());
+        this.greenDay = dbuSer.getMyDate(dbuSer.getGreenDay());
+        this.blueDay = dbuSer.getMyDate(dbuSer.getBlueDay());
+        this.brownDay = dbuSer.getMyDate(dbuSer.getBrownDay());
+        this.blackDay = dbuSer.getMyDate(dbuSer.getBlackDay());
+        this.isPrivate = dbuSer.isPrivateCheck();
+        this.activity = dbuSer.isActivity();
+    }
+
 
     public String get_id() {
         return _id;
@@ -147,5 +165,26 @@ public class User {
 
     public void setActivity(boolean activity) {
         this.activity = activity;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "User{" +
+                "_id='" + _id + '\'' +
+                ", name='" + name + '\'' +
+                ", family='" + family + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", registerDay=" + registerDay +
+                ", expireDay=" + expireDay +
+                ", yellowDay=" + yellowDay +
+                ", orangeDay=" + orangeDay +
+                ", greenDay=" + greenDay +
+                ", blueDay=" + blueDay +
+                ", brownDay=" + brownDay +
+                ", blackDay=" + blackDay +
+                ", isPrivate=" + isPrivate +
+                ", activity=" + activity +
+                '}';
     }
 }

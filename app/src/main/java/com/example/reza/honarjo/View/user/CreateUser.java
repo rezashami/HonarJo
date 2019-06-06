@@ -1,4 +1,4 @@
-package com.example.reza.honarjo.View;
+package com.example.reza.honarjo.View.user;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -19,9 +19,9 @@ import com.example.reza.honarjo.Controller.DBUser.UserViewModel;
 import com.example.reza.honarjo.Controller.api.api;
 import com.example.reza.honarjo.Controller.api.appClient;
 import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
-import com.example.reza.honarjo.Model.DBUSer;
+import com.example.reza.honarjo.Model.users.DBUSer;
 import com.example.reza.honarjo.Model.MyDate;
-import com.example.reza.honarjo.Model.User;
+import com.example.reza.honarjo.Model.users.User;
 import com.example.reza.honarjo.R;
 
 import java.net.InetAddress;
@@ -334,7 +334,7 @@ public class CreateUser extends AppCompatActivity {
                 ((_yellowYear == 0) && (_yellowMonth == 0) && (_yellowDay == 0)) ?
                         null :
                         new MyDate(_yellowYear, _yellowMonth, _yellowDay),
-                ((_orangeYear == 0) && (_orangeYear == 0) && (_orangeDay == 0)) ?
+                ((_orangeYear == 0) && (_orangeMonth == 0) && (_orangeDay == 0)) ?
                         null :
                         new MyDate(_orangeYear, _orangeYear, _orangeDay),
                 ((_greenYear == 0) && (_greenMonth == 0) && (_greenDay == 0)) ?

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:layoutDirection="rtl"
     android:textDirection="rtl"
-    tools:context=".View.UserListActivity">
+    tools:context=".View.user.UserListActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="fill_parent"

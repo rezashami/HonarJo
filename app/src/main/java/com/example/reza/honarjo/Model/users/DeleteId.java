@@ -1,4 +1,4 @@
-package com.example.reza.honarjo.Model;
+package com.example.reza.honarjo.Model.users;
 
 public class DeleteId {
     public String get_id() {

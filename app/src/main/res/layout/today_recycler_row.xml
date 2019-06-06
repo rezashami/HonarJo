@@ -17,7 +17,7 @@
             android:layout_marginStart="5dp"
             android:text="نام و نام خانوادگی"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="30sp" />
+            android:textSize="@dimen/_30ssp" />
 
         <TextView
             android:id="@+id/today_text_expire"

@@ -6,7 +6,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
-import com.example.reza.honarjo.Model.Insurance;
+import com.example.reza.honarjo.Model.alarm.DBAlarm;
+import com.example.reza.honarjo.Model.insuranses.Insurance;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -25,14 +26,14 @@ public class InsuranceViewModel extends AndroidViewModel {
         return isLoading;
     }
 
-    public LiveData<List<Insurance>> getAllInsurances() {
-        LiveData<List<Insurance>> users= null;
+    public LiveData<List<DBAlarm>> getAllInsurances() {
+        LiveData<List<DBAlarm>> alarms= null;
         try {
-            users = mRepository.getInsurances(isLoading);
+            alarms = mRepository.getInsurances(isLoading);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-        return users;
+        return alarms;
     }
 
     public void update(String id, List<Integer> expireDay)

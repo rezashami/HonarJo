@@ -1,8 +1,13 @@
-package com.example.reza.honarjo.Model;
+package com.example.reza.honarjo.Model.users;
 
 public class UpdateUser {
     private User user;
     private String _id;
+
+    public UpdateUser(User user, String _id) {
+        this.user = user;
+        this._id = _id;
+    }
 
     public User getUser() {
         return user;

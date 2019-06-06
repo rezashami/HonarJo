@@ -1,10 +1,10 @@
 package com.example.reza.honarjo.Controller.api;
 
-import com.example.reza.honarjo.Model.DeleteId;
-import com.example.reza.honarjo.Model.Insurance;
+import com.example.reza.honarjo.Model.alarm.AlarmInformation;
+import com.example.reza.honarjo.Model.users.DeleteId;
 import com.example.reza.honarjo.Model.LoginInformation;
-import com.example.reza.honarjo.Model.UpdateUser;
-import com.example.reza.honarjo.Model.User;
+import com.example.reza.honarjo.Model.users.UpdateUser;
+import com.example.reza.honarjo.Model.users.User;
 
 import java.util.List;
 
@@ -38,6 +38,10 @@ public interface api {
 
     @Headers("Content-Type: application/json")
     @POST("/users/delete")
-    Call<User> deleteUser(@Header("token") String token, @Body DeleteId user);
+    Call<String> deleteUser(@Header("token") String token, @Body DeleteId user);
+
+    @Headers("Content-Type: application/json")
+    @GET("/insurances")
+    Call<List<AlarmInformation>> getInsurancesAlarm(@Header("token") String token);
 
 }

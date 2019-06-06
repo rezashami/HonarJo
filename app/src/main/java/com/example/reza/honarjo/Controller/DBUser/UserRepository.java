@@ -2,14 +2,13 @@ package com.example.reza.honarjo.Controller.DBUser;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.reza.honarjo.Controller.db.DaoAccess;
 import com.example.reza.honarjo.Controller.db.DatabaseManager;
-import com.example.reza.honarjo.Model.DBUSer;
-import com.example.reza.honarjo.Model.ShowingUser;
+import com.example.reza.honarjo.Model.users.DBUSer;
+import com.example.reza.honarjo.Model.users.ShowingUser;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
