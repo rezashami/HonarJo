@@ -10,7 +10,7 @@
             android:title="مدیریت کاربرها" />
         <item
             android:id="@+id/nav_bime"
-            android:icon="@drawable/bime"
+            android:icon="@drawable/insurance"
             android:title="مشاهده بیمه‌ها" />
     </group>
 
