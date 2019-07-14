@@ -44,14 +44,14 @@ public class DBUSer implements Serializable {
         this.family = item.getFamily();
         this.phoneNumber = item.getPhoneNumber();
 
-        this.registerDay = item.getRegisterDay() != null ? item.getRegisterDay().getNumeric() : null;
-        this.expireDay = item.getExpireDay() != null ? item.getExpireDay().getNumeric() : null;
-        this.yellowDay = item.getYellowDay() != null ? item.getYellowDay().getNumeric() : null;
-        this.orangeDay = item.getOrangeDay() != null ? item.getOrangeDay().getNumeric() : null;
-        this.greenDay = item.getGreenDay() != null ? item.getGreenDay().getNumeric() : null;
-        this.blueDay = item.getBlueDay() != null ? item.getBlueDay().getNumeric() : null;
-        this.brownDay = item.getBrownDay() != null ? item.getBrownDay().getNumeric() : null;
-        this.blackDay = item.getBlackDay() != null ? item.getBlackDay().getNumeric() : null;
+        this.registerDay = item.getRegisterDay() != null ? item.getRegisterDay().toList() : null;
+        this.expireDay = item.getExpireDay() != null ? item.getExpireDay().toList() : null;
+        this.yellowDay = item.getYellowDay() != null ? item.getYellowDay().toList() : null;
+        this.orangeDay = item.getOrangeDay() != null ? item.getOrangeDay().toList() : null;
+        this.greenDay = item.getGreenDay() != null ? item.getGreenDay().toList() : null;
+        this.blueDay = item.getBlueDay() != null ? item.getBlueDay().toList() : null;
+        this.brownDay = item.getBrownDay() != null ? item.getBrownDay().toList() : null;
+        this.blackDay = item.getBlackDay() != null ? item.getBlackDay().toList() : null;
         this.privateCheck = item.getIsPrivate();
         this.activity = item.isActivity();
 

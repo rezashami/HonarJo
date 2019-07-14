@@ -35,7 +35,7 @@ public class OnlineRecyclerAdapter extends RecyclerView.Adapter<OnlineRecyclerAd
         User insurance = insurances.get(i);
         TextView expire = viewHolder.expire;
         TextView name = viewHolder.name;
-        name.setText(insurance.getName() + " "+insurance.getFamily());
+        name.setText(String.format("%s %s", insurance.getName(), insurance.getFamily()));
         //PersianDate pdate = new PersianDate(insurance.getExpireDay().getTime());
         expire.setText(insurance.getExpireDay().toString());
     }

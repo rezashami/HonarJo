@@ -12,6 +12,7 @@ public class AlarmInformation {
     @SerializedName("users")
     private List<ShowingUser> users;
 
+
     public MyDate getMyDate() {
         return myDate;
     }

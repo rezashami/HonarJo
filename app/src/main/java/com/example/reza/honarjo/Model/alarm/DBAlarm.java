@@ -50,8 +50,8 @@ public class DBAlarm {
     }
 
     @Ignore
-    public DBAlarm(AlarmInformation item){
-        this.users = item.getUserId();
-        this.myDate = item.getMyDate().getNumeric();
+    public DBAlarm(List<ShowingUser> users,MyDate date){
+        this.users = users;
+        this.myDate = date.toList();
     }
 }

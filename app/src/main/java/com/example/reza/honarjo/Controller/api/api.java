@@ -1,6 +1,7 @@
 package com.example.reza.honarjo.Controller.api;
 
 import com.example.reza.honarjo.Model.alarm.AlarmInformation;
+import com.example.reza.honarjo.Model.alarm.ServerReplyInsurance;
 import com.example.reza.honarjo.Model.users.DeleteId;
 import com.example.reza.honarjo.Model.LoginInformation;
 import com.example.reza.honarjo.Model.users.UpdateUser;
@@ -42,6 +43,6 @@ public interface api {
 
     @Headers("Content-Type: application/json")
     @GET("/insurances")
-    Call<List<AlarmInformation>> getInsurancesAlarm(@Header("token") String token);
+    Call<ServerReplyInsurance> getInsurancesAlarm(@Header("token") String token);
 
 }

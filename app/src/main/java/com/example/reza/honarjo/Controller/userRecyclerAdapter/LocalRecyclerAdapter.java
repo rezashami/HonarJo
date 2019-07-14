@@ -38,7 +38,7 @@ public class LocalRecyclerAdapter extends RecyclerView.Adapter<LocalRecyclerAdap
     public void onBindViewHolder(@NonNull LocalViewHolder holder, int position) {
         holder.bind(dbUsers.get(position), listener);
         ShowingUser current = dbUsers.get(position);
-        holder.hour.setText(String.valueOf(current.getName()) + " " + String.valueOf(current.getFamily()));
+        holder.hour.setText(String.format("%s %s", String.valueOf(current.getName()), String.valueOf(current.getFamily())));
     }
 
     public void setDbUsers(List<ShowingUser> users) {
