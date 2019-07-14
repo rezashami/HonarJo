@@ -18,7 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.reza.honarjo.Controller.DBUser.UserViewModel;
-import com.example.reza.honarjo.Controller.api.api;
+import com.example.reza.honarjo.Controller.api.API;
 import com.example.reza.honarjo.Controller.api.appClient;
 import com.example.reza.honarjo.Controller.db.DaoAccess;
 import com.example.reza.honarjo.Controller.db.DatabaseManager;
@@ -187,8 +187,8 @@ public class ShowUser extends AppCompatActivity {
         alert.setMessage("آیا مطمئنید؟");
         alert.setPositiveButton("بلی", (dialogInterface, i) -> {
             Intent reply = new Intent();
-            api apiInterface = appClient.getInstance().create(api.class);
-            Call<String> call = apiInterface.deleteUser(preferenceManager.getToken(), new DeleteId(dbuSer.get_id()));
+            API APIInterface = appClient.getInstance().create(API.class);
+            Call<String> call = APIInterface.deleteUser(preferenceManager.getToken(), new DeleteId(dbuSer.get_id()));
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {

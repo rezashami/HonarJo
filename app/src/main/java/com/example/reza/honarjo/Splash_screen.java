@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.reza.honarjo.Controller.api.api;
+import com.example.reza.honarjo.Controller.api.API;
 import com.example.reza.honarjo.Controller.api.appClient;
 import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
 import com.example.reza.honarjo.Model.LoginInformation;
@@ -22,7 +22,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class Splash_screen extends AppCompatActivity {
     PreferenceManager preferenceManager;
-    private api apiInterface;
+    private API APIInterface;
     EditText user_name, password;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class Splash_screen extends AppCompatActivity {
             lunchMain();
         }
         else{
-            apiInterface = appClient.getInstance().create(api.class);
+            APIInterface = appClient.getInstance().create(API.class);
             Button loginBtn = findViewById(R.id.login_btn);
             user_name = findViewById(R.id.username);
             password = findViewById(R.id.password);
@@ -55,7 +55,7 @@ public class Splash_screen extends AppCompatActivity {
                     }
                     else{
                         LoginInformation loginInformation = new LoginInformation(username,pass);
-                        Call<String> call = apiInterface.login(loginInformation);
+                        Call<String> call = APIInterface.login(loginInformation);
                         call.enqueue(new Callback<String>() {
                             @Override
                             public void onResponse(Call<String> call, Response<String> response) {

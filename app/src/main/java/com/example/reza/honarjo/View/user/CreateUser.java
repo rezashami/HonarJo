@@ -16,7 +16,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.reza.honarjo.Controller.DBUser.UserViewModel;
-import com.example.reza.honarjo.Controller.api.api;
+import com.example.reza.honarjo.Controller.api.API;
 import com.example.reza.honarjo.Controller.api.appClient;
 import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
 import com.example.reza.honarjo.Model.users.DBUSer;
@@ -117,8 +117,8 @@ public class CreateUser extends AppCompatActivity {
             return;
         }
         Intent reply = new Intent();
-        api apiInterface = appClient.getInstance().create(api.class);
-        Call<User> call = apiInterface.addNewUser(preferenceManager.getToken(), getUser());
+        API APIInterface = appClient.getInstance().create(API.class);
+        Call<User> call = APIInterface.addNewUser(preferenceManager.getToken(), getUser());
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {

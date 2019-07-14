@@ -13,31 +13,31 @@ import com.example.reza.honarjo.Model.users.ShowingUser;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-class UserRepository {
+public class UserRepository {
     private DaoAccess AlarmDao;
 
-    UserRepository(Application application) {
+    public UserRepository(Application application) {
         DatabaseManager db = DatabaseManager.getDatabase(application);
         AlarmDao = db.daoAccess();
     }
 
-    LiveData<List<ShowingUser>> getUsers() throws ExecutionException, InterruptedException {
+    public LiveData<List<ShowingUser>> getUsers() throws ExecutionException, InterruptedException {
         return new queryAsyncTask(AlarmDao).execute().get();
     }
 
-    LiveData<List<ShowingUser>> getUsersByName(String name) throws ExecutionException, InterruptedException {
+    public LiveData<List<ShowingUser>> getUsersByName(String name) throws ExecutionException, InterruptedException {
         return new getUsersNames(AlarmDao,name).execute().get();
     }
 
-    void insert(DBUSer dbuSer) {
+    public void insert(DBUSer dbuSer) {
         new insertAsyncTask(AlarmDao).execute(dbuSer);
     }
 
-    void update(DBUSer dbuSer) {
+    public void update(DBUSer dbuSer) {
         new updateAsyncTask(AlarmDao).execute(dbuSer);
     }
 
-    void remove(DBUSer dbuSer) {
+    public void remove(DBUSer dbuSer) {
         new deleteAsyncTask(AlarmDao).execute(dbuSer);
     }
 

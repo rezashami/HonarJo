@@ -16,7 +16,7 @@ import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
-public interface api {
+public interface API {
     //    @GET("/login")
 //    Call<List<Insurance>> getInsurances(@Header("token") String token);
 //    @POST("/login")

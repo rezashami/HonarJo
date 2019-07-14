@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="60dp"
+    android:padding="5dp"
     app:cardBackgroundColor="#f0f0f0">
 
     <LinearLayout

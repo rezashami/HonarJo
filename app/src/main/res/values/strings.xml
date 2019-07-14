@@ -25,4 +25,5 @@
     <string name="private_check">عضویت در کلاس خصوصی: </string>
     <string name="search_hint">جست و جو کاربر</string>
     <string name="usersInformation">مشخصات افراد:</string>
+    <string name="exit_from_app">خروج از برنامه</string>
 </resources>

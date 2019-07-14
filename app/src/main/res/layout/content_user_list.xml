@@ -12,8 +12,6 @@
         android:id="@+id/user_content_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         tools:listitem="@layout/recycler_row_user" >
 
     </android.support.v7.widget.RecyclerView>

@@ -1,6 +1,7 @@
 package com.example.reza.honarjo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -12,16 +13,32 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.example.reza.honarjo.Controller.DBInsurance.InsuranceRepository;
+import com.example.reza.honarjo.Controller.DBUser.UserRepository;
+import com.example.reza.honarjo.Controller.api.API;
+import com.example.reza.honarjo.Controller.api.appClient;
 import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
 import com.example.reza.honarjo.Model.alarm.ServerReplyInsurance;
+import com.example.reza.honarjo.Model.users.DBUSer;
+import com.example.reza.honarjo.Model.users.User;
+import com.example.reza.honarjo.View.alarmManager.AlarmManagerActivity;
+import com.example.reza.honarjo.View.history.HistoryActivity;
+import com.example.reza.honarjo.View.insurance.InsuranceListActivity;
+import com.example.reza.honarjo.View.setting.SettingActivity;
+import com.example.reza.honarjo.View.user.UserListActivity;
 
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainActivity extends AppCompatActivity {
 
     private ServerReplyInsurance alarmInformation;
     PreferenceManager preferenceManager;
-    InsuranceRepository mRepository;
+    InsuranceRepository insuranceRepository;
+    UserRepository userRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,44 +48,45 @@ public class MainActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
-
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                findViewById(R.id.content_main).setVisibility(View.VISIBLE);
-                findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-            }
-        }, 2000);
+        handler.postDelayed(() -> {
+            findViewById(R.id.content_main).setVisibility(View.VISIBLE);
+            findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+        }, 1000);
+//        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+//        findViewById(R.id.content_main).setVisibility(View.VISIBLE);
+        findViewById(R.id.main_content_users).setOnClickListener(v -> {
+            Intent myIntent = new Intent(getApplicationContext(), UserListActivity.class);
+            startActivity(myIntent);
+        });
+        findViewById(R.id.main_content_insurances).setOnClickListener(v -> {
+            Intent myIntent = new Intent(getApplicationContext(), InsuranceListActivity.class);
+            startActivity(myIntent);
+        });
+        findViewById(R.id.main_content_history).setOnClickListener(v -> {
+            Intent myIntent = new Intent(getApplicationContext(), HistoryActivity.class);
+            startActivity(myIntent);
+        });
+
+        findViewById(R.id.main_content_alarm_manager).setOnClickListener(v -> {
+            Intent myIntent = new Intent(getApplicationContext(), AlarmManagerActivity.class);
+            startActivity(myIntent);
+        });
+        findViewById(R.id.main_content_setting).setOnClickListener(v -> {
+            Intent myIntent = new Intent(getApplicationContext(), SettingActivity.class);
+            startActivity(myIntent);
+        });
         preferenceManager = new PreferenceManager(getApplicationContext());
-        mRepository = new InsuranceRepository(getApplication());
+        insuranceRepository = new InsuranceRepository(getApplication());
+        userRepository = new UserRepository(getApplication());
 
 //        if (!preferenceManager.FirstLaunch()) {
-//            fetchLocally();
+//            //fetchLocally();
 //        } else {
 //            fetchOnline();
+//            if (!preferenceManager.insuranceFetch())
 //        }
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -112,20 +130,17 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
 //    public void fetchOnline() {
-//        api apiInterface = appClient.getInstance().create(api.class);
+//        API apiInterface = appClient.getInstance().create(API.class);
 //        Call<List<User>> call = apiInterface.getAllUsers(preferenceManager.getToken());
 //        Call<ServerReplyInsurance> myCall = apiInterface.getInsurancesAlarm(preferenceManager.getToken());
 //        call.enqueue(new Callback<List<User>>() {
 //            @Override
 //            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
 //                assert response.body() != null;
-//                users = response.body();
-//                MainRecyclerAdapter adapter = new MainRecyclerAdapter(users);
-//                recyclerView.setAdapter(adapter);
-//                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-//                UserViewModel userViewModel = ViewModelProviders.of(MainActivity.this).get(UserViewModel.class);
+//                List <User> users = response.body();
+//
 //                for (User item : users) {
-//                    userViewModel.insert(new DBUSer(item));
+//                    userRepository.insert(new DBUSer(item));
 //                }
 //                preferenceManager.setFirstTimeLaunch(false);
 //                myCall.enqueue(new Callback<ServerReplyInsurance>() {
