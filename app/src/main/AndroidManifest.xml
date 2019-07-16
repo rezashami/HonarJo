@@ -16,14 +16,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".View.alarmManager.AlarmManagerActivity" />
+        <activity
+            android:name=".View.insurance.ShowInsurance"
+            android:label="@string/title_activity_show_insurance"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".View.history.HistoryActivity" />
         <activity android:name=".View.setting.SettingActivity" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Splash_screen">
+        <activity
+            android:name=".Splash_screen"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -3,29 +3,31 @@ package com.example.reza.honarjo;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.example.reza.honarjo.Controller.DBInsurance.InsuranceRepository;
 import com.example.reza.honarjo.Controller.DBUser.UserRepository;
 import com.example.reza.honarjo.Controller.api.API;
 import com.example.reza.honarjo.Controller.api.appClient;
 import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
+import com.example.reza.honarjo.Model.MyDate;
+import com.example.reza.honarjo.Model.alarm.AlarmInformation;
+import com.example.reza.honarjo.Model.alarm.DBAlarm;
 import com.example.reza.honarjo.Model.alarm.ServerReplyInsurance;
 import com.example.reza.honarjo.Model.users.DBUSer;
+import com.example.reza.honarjo.Model.users.ShowingUser;
 import com.example.reza.honarjo.Model.users.User;
-import com.example.reza.honarjo.View.alarmManager.AlarmManagerActivity;
 import com.example.reza.honarjo.View.history.HistoryActivity;
 import com.example.reza.honarjo.View.insurance.InsuranceListActivity;
 import com.example.reza.honarjo.View.setting.SettingActivity;
 import com.example.reza.honarjo.View.user.UserListActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -35,10 +37,12 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ServerReplyInsurance alarmInformation;
+
+    public static MainActivity mainActivity ;
     PreferenceManager preferenceManager;
     InsuranceRepository insuranceRepository;
     UserRepository userRepository;
+    API apiInterface = appClient.getInstance().create(API.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +51,7 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
-
-        Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            findViewById(R.id.content_main).setVisibility(View.VISIBLE);
-            findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-        }, 1000);
+        mainActivity= this;
 //        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
 //        findViewById(R.id.content_main).setVisibility(View.VISIBLE);
         findViewById(R.id.main_content_users).setOnClickListener(v -> {
@@ -67,11 +66,6 @@ public class MainActivity extends AppCompatActivity {
             Intent myIntent = new Intent(getApplicationContext(), HistoryActivity.class);
             startActivity(myIntent);
         });
-
-        findViewById(R.id.main_content_alarm_manager).setOnClickListener(v -> {
-            Intent myIntent = new Intent(getApplicationContext(), AlarmManagerActivity.class);
-            startActivity(myIntent);
-        });
         findViewById(R.id.main_content_setting).setOnClickListener(v -> {
             Intent myIntent = new Intent(getApplicationContext(), SettingActivity.class);
             startActivity(myIntent);
@@ -79,6 +73,18 @@ public class MainActivity extends AppCompatActivity {
         preferenceManager = new PreferenceManager(getApplicationContext());
         insuranceRepository = new InsuranceRepository(getApplication());
         userRepository = new UserRepository(getApplication());
+        Log.e("PREFERENCE", String.valueOf(!preferenceManager.userFetch()));
+        Log.e("PREFERENCE", String.valueOf(!preferenceManager.insuranceFetch()));
+        if (!preferenceManager.userFetch()) {
+            fetchUser();
+        }
+        if (!preferenceManager.insuranceFetch()) {
+            fetchInsurance();
+        }
+        if (preferenceManager.userFetch() && preferenceManager.insuranceFetch()) {
+            findViewById(R.id.content_main).setVisibility(View.VISIBLE);
+            findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+        }
 
 //        if (!preferenceManager.FirstLaunch()) {
 //            //fetchLocally();
@@ -93,7 +99,72 @@ public class MainActivity extends AppCompatActivity {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
+    private void fetchUser() {
+        Call<List<User>> call = apiInterface.getAllUsers(preferenceManager.getToken());
+        call.enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                assert response.body() != null;
+                List<User> users = response.body();
+                for (User item : users) {
+                    userRepository.insert(new DBUSer(item));
+                }
+                preferenceManager.setUserFetch(true);
+                if (preferenceManager.userFetch() && preferenceManager.insuranceFetch()) {
+                    findViewById(R.id.content_main).setVisibility(View.VISIBLE);
+                    findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                }
+            }
 
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                Log.e("Tag error", t.toString());
+            }
+        });
+    }
+
+    private void fetchInsurance() {
+        Call<ServerReplyInsurance> call = apiInterface.getInsurancesAlarm(preferenceManager.getToken());
+        call.enqueue(new Callback<ServerReplyInsurance>() {
+            @Override
+            public void onResponse(Call<ServerReplyInsurance> call, Response<ServerReplyInsurance> response) {
+                if (response.code() == 200) {
+                    if (response.body() == null) {
+                        Toast.makeText(MainActivity.this, "مشکل در تجزیه بسته", Toast.LENGTH_LONG).show();
+
+                    } else {
+                        ServerReplyInsurance alarmInformation = response.body();
+                        List<AlarmInformation> pass = alarmInformation.getPass();
+                        List<AlarmInformation> notPass = alarmInformation.getNotPass();
+                        List<ShowingUser> passUsers = new ArrayList<>();
+                        for (AlarmInformation item : pass) {
+                            passUsers.addAll(item.getUserId());
+                        }
+                        insuranceRepository.insert(new DBAlarm(passUsers, new MyDate(0, 0, 0)));
+                        for (AlarmInformation item : notPass) {
+                            insuranceRepository.insert(new DBAlarm(item.getUserId(), item.getMyDate()));
+                        }
+                        preferenceManager.setInsuranceFetch(true);
+                        if (preferenceManager.userFetch() && preferenceManager.insuranceFetch()) {
+                            findViewById(R.id.content_main).setVisibility(View.VISIBLE);
+                            findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                        }
+                    }
+
+                } else if (response.code() == 401) {
+                    Toast.makeText(MainActivity.this, "نوکن ارسالی مشکل دارد!", Toast.LENGTH_LONG).show();
+                } else if (response.code() == 501) {
+                    Toast.makeText(MainActivity.this, "خطا در سرور!", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ServerReplyInsurance> call, Throwable t) {
+                Log.e("Tag error", t.toString());
+            }
+        });
+    }
+}
 //    private void setAlarm(int dayOfWeek, int Id) {
 //        Calendar cal_alarm = Calendar.getInstance();
 //
@@ -129,49 +200,3 @@ public class MainActivity extends AppCompatActivity {
 //        //7 * 24 * 60 * 60 * 1000
 //    }
 
-//    public void fetchOnline() {
-//        API apiInterface = appClient.getInstance().create(API.class);
-//        Call<List<User>> call = apiInterface.getAllUsers(preferenceManager.getToken());
-//        Call<ServerReplyInsurance> myCall = apiInterface.getInsurancesAlarm(preferenceManager.getToken());
-//        call.enqueue(new Callback<List<User>>() {
-//            @Override
-//            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-//                assert response.body() != null;
-//                List <User> users = response.body();
-//
-//                for (User item : users) {
-//                    userRepository.insert(new DBUSer(item));
-//                }
-//                preferenceManager.setFirstTimeLaunch(false);
-//                myCall.enqueue(new Callback<ServerReplyInsurance>() {
-//                    @Override
-//                    public void onResponse(Call<ServerReplyInsurance> call, Response<ServerReplyInsurance> response) {
-//                        assert response.body() != null;
-//                        alarmInformation = response.body();
-//                        List<AlarmInformation> pass = alarmInformation.getPass();
-//                        List<AlarmInformation> notPass = alarmInformation.getNotPass();
-//                        List<ShowingUser> passUsers = new ArrayList<>();
-//
-//                        for (AlarmInformation item : pass) {
-//                            passUsers.addAll(item.getUserId());
-//                        }
-//                        mRepository.insert(new DBAlarm(passUsers,new MyDate(0,0,0)));
-//                        for (AlarmInformation item : notPass) {
-//                            mRepository.insert(new DBAlarm(item.getUserId(),item.getMyDate()));
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<ServerReplyInsurance> call, Throwable t) {
-//                        Log.e("Tag error nested", t.toString());
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<User>> call, Throwable t) {
-//                Log.e("Tag error", t.toString());
-//            }
-//        });
-//    }
-}

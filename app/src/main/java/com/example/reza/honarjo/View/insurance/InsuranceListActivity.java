@@ -3,8 +3,8 @@ package com.example.reza.honarjo.View.insurance;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -19,7 +19,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class InsuranceListActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
-    private InsuranceViewModel insuranceViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,16 +27,16 @@ public class InsuranceListActivity extends AppCompatActivity {
         Toolbar toolbar =  findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final InsuranceRecyclerAdapter adapter = new InsuranceRecyclerAdapter( this, item -> {
-//            Intent myIntent = new Intent(getApplicationContext(), ShowUser.class);
-//            myIntent.putExtra("User",item);
-//            //startActivityForResult(myIntent,MEDICINE_WORK_ACTIVITY_REQUEST_CODE);
-//            startActivity(myIntent);
+            Intent myIntent = new Intent(getApplicationContext(), ShowInsurance.class);
+            myIntent.putExtra("Insurance",item);
+            //startActivityForResult(myIntent,MEDICINE_WORK_ACTIVITY_REQUEST_CODE);
+            startActivity(myIntent);
         });
         recyclerView = findViewById(R.id.insurance_content_list);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        insuranceViewModel = ViewModelProviders.of(this).get(InsuranceViewModel.class);
+        InsuranceViewModel insuranceViewModel = ViewModelProviders.of(this).get(InsuranceViewModel.class);
         insuranceViewModel.getAllInsurances().observe(this, adapter::setInsurances);
         insuranceViewModel.getIsLoading().observe(this, isLoading -> {
             if (isLoading!= null)

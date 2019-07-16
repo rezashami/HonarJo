@@ -43,7 +43,7 @@ public class PreferenceManager {
     }
 
     public boolean userFetch() {
-        return sharedPreferences.getBoolean(USER_FETCH, true);
+        return sharedPreferences.getBoolean(USER_FETCH, false);
     }
 
     public void setInsuranceFetch(boolean isInsuranceFetch) {
@@ -52,6 +52,6 @@ public class PreferenceManager {
     }
 
     public boolean insuranceFetch() {
-        return sharedPreferences.getBoolean(INSURANCE_FETCH, true);
+        return sharedPreferences.getBoolean(INSURANCE_FETCH, false);
     }
 }

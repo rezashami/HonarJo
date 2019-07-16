@@ -26,4 +26,5 @@
     <string name="search_hint">جست و جو کاربر</string>
     <string name="usersInformation">مشخصات افراد:</string>
     <string name="exit_from_app">خروج از برنامه</string>
+    <string name="title_activity_show_insurance">نمایش بیمه</string>
 </resources>

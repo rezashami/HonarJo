@@ -3,6 +3,7 @@ package com.example.reza.honarjo.Controller.userRecyclerAdapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,11 +39,12 @@ public class LocalRecyclerAdapter extends RecyclerView.Adapter<LocalRecyclerAdap
     public void onBindViewHolder(@NonNull LocalViewHolder holder, int position) {
         holder.bind(dbUsers.get(position), listener);
         ShowingUser current = dbUsers.get(position);
-        holder.hour.setText(String.format("%s %s", String.valueOf(current.getName()), String.valueOf(current.getFamily())));
+        holder.username.setText(String.format("%s %s", String.valueOf(current.getName()), String.valueOf(current.getFamily())));
     }
 
     public void setDbUsers(List<ShowingUser> users) {
         dbUsers = users;
+        Log.e("user's", String.valueOf(dbUsers.size()));
         notifyDataSetChanged();
     }
 
@@ -56,12 +58,12 @@ public class LocalRecyclerAdapter extends RecyclerView.Adapter<LocalRecyclerAdap
     }
 
     class LocalViewHolder extends RecyclerView.ViewHolder {
-        private final TextView hour;
+        private final TextView username;
 
 
         LocalViewHolder(View itemView) {
             super(itemView);
-            hour = itemView.findViewById(R.id.username_view_in_row);
+            username = itemView.findViewById(R.id.username_view_in_row);
         }
 
         void bind(ShowingUser dbUsers, LocalRecyclerAdapter.OnItemClickListener listener) {

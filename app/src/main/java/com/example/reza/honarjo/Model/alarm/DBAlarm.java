@@ -11,11 +11,12 @@ import com.example.reza.honarjo.Controller.db.UserListConverter;
 import com.example.reza.honarjo.Model.MyDate;
 import com.example.reza.honarjo.Model.users.ShowingUser;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Entity(tableName = "alarm")
 @TypeConverters({ListConverter.class, UserListConverter.class})
-public class DBAlarm {
+public class DBAlarm implements Serializable {
     @PrimaryKey (autoGenerate = true)
     @NonNull
     private int id;
