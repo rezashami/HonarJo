@@ -3,11 +3,11 @@ package com.example.reza.honarjo.Model;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class MyDate {
+public class MyDate implements Serializable {
     private Integer year;
     private Integer month;
     private Integer day;
@@ -70,4 +70,6 @@ public class MyDate {
         this.month = month;
         this.day = day;
     }
+
+
 }

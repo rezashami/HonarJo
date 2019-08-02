@@ -6,24 +6,27 @@ import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
+import com.example.reza.honarjo.Controller.db.DateConverter;
 import com.example.reza.honarjo.Controller.db.ListConverter;
 import com.example.reza.honarjo.Controller.db.UserListConverter;
-import com.example.reza.honarjo.Model.MyDate;
 import com.example.reza.honarjo.Model.users.ShowingUser;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity(tableName = "alarm")
-@TypeConverters({ListConverter.class, UserListConverter.class})
+@TypeConverters({ListConverter.class, UserListConverter.class, DateConverter.class})
 public class DBAlarm implements Serializable {
-    @PrimaryKey (autoGenerate = true)
     @NonNull
+    @PrimaryKey
     private int id;
-    private List<Integer> myDate;
+    private Date myDate;
     private List<ShowingUser> users;
 
     public DBAlarm() {
+        users = new ArrayList<>();
     }
 
     public int getId() {
@@ -42,17 +45,32 @@ public class DBAlarm implements Serializable {
         this.users = users;
     }
 
-    public List<Integer> getMyDate() {
+    @Ignore
+    public DBAlarm(List<ShowingUser> users, Date date) {
+        this.users = users;
+        this.myDate = date;
+    }
+
+    public Date getMyDate() {
         return myDate;
     }
 
-    public void setMyDate(List<Integer> myDate) {
+    public void setMyDate(Date myDate) {
         this.myDate = myDate;
     }
 
     @Ignore
-    public DBAlarm(List<ShowingUser> users,MyDate date){
-        this.users = users;
-        this.myDate = date.toList();
+    public void addUser(ShowingUser user) {
+        users.add(user);
+    }
+
+    @Ignore
+    @Override
+    public String toString() {
+        return "DBAlarm{" +
+                "id=" + id +
+                ", myDate=" + myDate +
+                ", users=" + users.size() +
+                '}';
     }
 }

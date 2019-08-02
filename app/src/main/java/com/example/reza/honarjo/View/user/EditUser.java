@@ -1,11 +1,7 @@
 package com.example.reza.honarjo.View.user;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -17,22 +13,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.example.reza.honarjo.Controller.DBUser.UserViewModel;
-import com.example.reza.honarjo.Controller.api.API;
-import com.example.reza.honarjo.Controller.api.appClient;
-import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
 import com.example.reza.honarjo.Model.users.DBUSer;
-import com.example.reza.honarjo.Model.users.UpdateUser;
-import com.example.reza.honarjo.Model.users.User;
 import com.example.reza.honarjo.R;
 
-import java.util.List;
+import java.util.Calendar;
+import java.util.Date;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class EditUser extends AppCompatActivity {
@@ -48,7 +35,6 @@ public class EditUser extends AppCompatActivity {
             brownDay, brownMonth, brownYear,
             blackDay, blackMonth, blackYear;
     CheckBox privateCheck;
-    private PreferenceManager preferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +43,12 @@ public class EditUser extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.edit_user_toolbar);
         setSupportActionBar(toolbar);
         setTitle("تغییر اطلاعات کاربر");
-        preferenceManager = new PreferenceManager(getApplicationContext());
         Bundle b = this.getIntent().getExtras();
         if (b != null) {
             dbuSer = (DBUSer) b.getSerializable("User");
-            Log.e("DBUSER", dbuSer.toString());
+            if (dbuSer != null) {
+                Log.e("DBUSER", dbuSer.toString());
+            }
         }
         renderUI();
     }
@@ -130,10 +117,25 @@ public class EditUser extends AppCompatActivity {
     }
 
     @NonNull
-    private String getDayString(List<Integer> input, int number) {
+    private String getDayString(Date input, int number) {
+        String result =" - ";
+        Calendar cal_alarm = Calendar.getInstance();
+        cal_alarm.setTime(input);
         if (input == null)
-            return " - ";
-        return input.get(number).toString();
+            return result;
+        if(number == 0)
+        {
+            result  = String.valueOf(cal_alarm.get(Calendar.YEAR));
+        }
+        else if(number == 1)
+        {
+            result  = String.valueOf(cal_alarm.get(Calendar.MONTH));
+        }
+        else if(number == 2)
+        {
+            result  = String.valueOf(cal_alarm.get(Calendar.DAY_OF_MONTH));
+        }
+        return result;
     }
 
     @Override
@@ -151,65 +153,16 @@ public class EditUser extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.edit_user_save_user:
-                showDialog();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.edit_user_save_user) {
+            showDialog();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
 
     }
 
     private void save() {
-        if (!isInternetAvailable())
-        {
-            Toast.makeText(this, "اتصال به اینترنت برقرار نمی‌باشد", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        Intent reply = new Intent();
-        API APIInterface = appClient.getInstance().create(API.class);
-        Call<User> call = APIInterface.updateUser(preferenceManager.getToken(), new UpdateUser(new User(dbuSer),dbuSer.get_id()));
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-
-                if (response.code() == 200 && response.body() != null) {
-                    UserViewModel userViewModel = ViewModelProviders.of(EditUser.this).get(UserViewModel.class);
-                    userViewModel.update(new DBUSer(response.body()));
-                    Log.e("Response 200", response.body().toString());
-                    // update insurance
-                    //setResult(RESULT_OK, reply);
-                    finish();
-                } else {
-                    Log.e("Response ---", response.toString());
-                    Toast.makeText(getApplicationContext(), "خطا در گرفتن پاسخ", Toast.LENGTH_SHORT).show();
-                    //setResult(RESULT_CANCELED, reply);
-                    finish();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "خطا در برقراری ارتباط", Toast.LENGTH_SHORT).show();
-                Log.e("Response", t.getMessage());
-                //setResult(RESULT_CANCELED, reply);
-                finish();
-            }
-        });
-    }
-
-    public boolean isInternetAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        //we are connected to a network
-        return connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
-    }
-
-    @Override
-    public void onBackPressed() {
-
-        super.onBackPressed();
+       //save to db
     }
 
     void showDialog() {

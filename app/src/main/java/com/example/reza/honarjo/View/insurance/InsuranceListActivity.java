@@ -20,6 +20,7 @@ public class InsuranceListActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,9 +44,11 @@ public class InsuranceListActivity extends AppCompatActivity {
                 if (isLoading)
                     Toast.makeText(getApplicationContext(), "منتظر بمانید...", Toast.LENGTH_SHORT).show();
         });
+
     }
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
+
 }

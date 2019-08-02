@@ -1,13 +1,10 @@
 package com.example.reza.honarjo.View.user;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,25 +12,17 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.reza.honarjo.Controller.DBUser.UserViewModel;
-import com.example.reza.honarjo.Controller.api.API;
-import com.example.reza.honarjo.Controller.api.appClient;
-import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
+import com.example.reza.honarjo.Controller.DBUser.UserRepository;
 import com.example.reza.honarjo.Model.users.DBUSer;
-import com.example.reza.honarjo.Model.MyDate;
-import com.example.reza.honarjo.Model.users.User;
 import com.example.reza.honarjo.R;
 
-import java.net.InetAddress;
+import java.util.Calendar;
+import java.util.Date;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class CreateUser extends AppCompatActivity {
 
-    private PreferenceManager preferenceManager;
     EditText name, family, phoneNumber,
             registerDay, registerMonth, registerYear,
             expireDay, expireMonth, expireYear,
@@ -44,6 +33,7 @@ public class CreateUser extends AppCompatActivity {
             brownDay, brownMonth, brownYear,
             blackDay, blackMonth, blackYear;
     CheckBox privateCheck;
+    private UserRepository userRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +42,6 @@ public class CreateUser extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.create_user_toolbar);
         setSupportActionBar(toolbar);
         setTitle("افزودن کاربر");
-        preferenceManager = new PreferenceManager(getApplicationContext());
         name = findViewById(R.id.create_user_name);
         family = findViewById(R.id.create_user_family);
         phoneNumber = findViewById(R.id.create_user_phone_number);
@@ -81,6 +70,7 @@ public class CreateUser extends AppCompatActivity {
         blueYear = findViewById(R.id.create_user_blue_year);
         brownYear = findViewById(R.id.create_user_brown_year);
         blackYear = findViewById(R.id.create_user_black_year);
+        userRepository = new UserRepository(getApplication());
     }
 
     @Override
@@ -97,62 +87,20 @@ public class CreateUser extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.edit_user_save_user:
-                create();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.edit_user_save_user) {
+            create();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
 
     }
 
     private void create() {
-        if (isInternetAvailable()) {
-            Toast.makeText(this, "اتصال به اینترنت برقرار نمی‌باشد", Toast.LENGTH_SHORT).show();
-            return;
-        }
         if (!checkUI()) {
             Toast.makeText(this, "موراد را پر کنید", Toast.LENGTH_SHORT).show();
             return;
         }
-        Intent reply = new Intent();
-        API APIInterface = appClient.getInstance().create(API.class);
-        Call<User> call = APIInterface.addNewUser(preferenceManager.getToken(), getUser());
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if (response.code() == 200 && response.body() != null) {
-                    UserViewModel userViewModel = ViewModelProviders.of(CreateUser.this).get(UserViewModel.class);
-                    userViewModel.insert(new DBUSer(response.body()));
-                    setResult(RESULT_OK, reply);
-                    finish();
-                } else {
-                    Log.e("Response", response.toString());
-                    Toast.makeText(getApplicationContext(), "خطا در گرفتن پاسخ", Toast.LENGTH_SHORT).show();
-                    setResult(RESULT_CANCELED, reply);
-                    finish();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "خطا در برقراری ارتباط", Toast.LENGTH_SHORT).show();
-                setResult(RESULT_CANCELED, reply);
-                finish();
-            }
-        });
-    }
-
-    public boolean isInternetAvailable() {
-        try {
-            InetAddress ipAddr = InetAddress.getByName("google.com");
-            //You can replace it with your name
-            return !ipAddr.equals("");
-
-        } catch (Exception e) {
-            return false;
-        }
+        // add to db
     }
 
     private boolean checkUI() {
@@ -251,12 +199,12 @@ public class CreateUser extends AppCompatActivity {
         return flag;
     }
 
-    private User getUser() {
+    private DBUSer getUser() {
         String _name = name.getText().toString();
         String _family = family.getText().toString();
         String _phoneNumber = phoneNumber.getText().toString();
-        Boolean prv = privateCheck.isChecked();
-        Integer _registerDay, _registerMonth, _registerYear,
+        boolean prv = privateCheck.isChecked();
+        int _registerDay, _registerMonth, _registerYear,
                 _expireDay, _expireMonth, _expireYear,
                 _yellowDay = 0, _yellowMonth = 0, _yellowYear = 0,
                 _orangeDay = 0, _orangeMonth = 0, _orangeYear = 0,
@@ -325,30 +273,36 @@ public class CreateUser extends AppCompatActivity {
         if (!TextUtils.isEmpty(blackYear.getText())) {
             _blackYear = Integer.parseInt(blackYear.getText().toString());
         }
-        return new User(_name, _family, _phoneNumber,
+        return new DBUSer(_name, _family, _phoneNumber,
                 ((_registerYear == 0) && (_registerMonth == 0) && (_registerDay == 0)) ?
-                        null : new MyDate(_registerYear, _registerMonth, _registerDay),
+                        null : getDate(_registerYear, _registerMonth, _registerDay),
                 ((_expireYear == 0) && (_expireMonth == 0) && (_expireDay == 0)) ?
                         null :
-                        new MyDate(_expireYear, _expireMonth, _expireDay),
+                        getDate(_expireYear, _expireMonth, _expireDay),
                 ((_yellowYear == 0) && (_yellowMonth == 0) && (_yellowDay == 0)) ?
                         null :
-                        new MyDate(_yellowYear, _yellowMonth, _yellowDay),
+                        getDate(_yellowYear, _yellowMonth, _yellowDay),
                 ((_orangeYear == 0) && (_orangeMonth == 0) && (_orangeDay == 0)) ?
                         null :
-                        new MyDate(_orangeYear, _orangeYear, _orangeDay),
+                        getDate(_orangeYear, _orangeYear, _orangeDay),
                 ((_greenYear == 0) && (_greenMonth == 0) && (_greenDay == 0)) ?
                         null :
-                        new MyDate(_greenYear, _greenMonth, _greenDay),
+                        getDate(_greenYear, _greenMonth, _greenDay),
                 ((_blueYear == 0) && (_blueMonth == 0) && (_blueDay == 0)) ?
                         null :
-                        new MyDate(_blueYear, _blueMonth, _blueDay),
+                        getDate(_blueYear, _blueMonth, _blueDay),
                 ((_brownYear == 0) && (_brownMonth == 0) && (_brownDay == 0)) ?
                         null :
-                        new MyDate(_brownYear, _brownMonth, _brownDay),
+                        getDate(_brownYear, _brownMonth, _brownDay),
                 ((_blackYear == 0) && (_blackMonth == 0) && (_blackDay == 0)) ?
                         null :
-                        new MyDate(_blackYear, _blackMonth, _blackDay),
-                prv);
+                        getDate(_blackYear, _blackMonth, _blackDay),
+                prv,0); //code must be edit
     }
+    private Date getDate(Integer item1, Integer item2, Integer item3) {
+        Calendar cal_alarm = Calendar.getInstance();
+        cal_alarm.set(item1,item2,item3);
+        return cal_alarm.getTime();
+    }
+
 }

@@ -6,63 +6,58 @@ import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
+import com.example.reza.honarjo.Controller.db.DateConverter;
 import com.example.reza.honarjo.Controller.db.ListConverter;
-import com.example.reza.honarjo.Model.MyDate;
 
 import java.io.Serializable;
-import java.util.List;
-
-import static java.lang.String.valueOf;
+import java.util.Date;
 
 @Entity(tableName = "users")
-@TypeConverters({ListConverter.class})
+@TypeConverters({ListConverter.class, DateConverter.class})
 public class DBUSer implements Serializable {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @NonNull
-    private String _id;
+    private Integer _id;
     private String name;
     private String family;
     private String phoneNumber;
-    private List<Integer> registerDay;
-    private List<Integer> expireDay;
-    private List<Integer> yellowDay;
-    private List<Integer> orangeDay;
-    private List<Integer> greenDay;
-    private List<Integer> blueDay;
-    private List<Integer> brownDay;
-    private List<Integer> blackDay;
+    private Date registerDay;
+    private Date expireDay;
+    private Date yellowDay;
+    private Date orangeDay;
+    private Date greenDay;
+    private Date blueDay;
+    private Date brownDay;
+    private Date blackDay;
     private boolean privateCheck;
-    private boolean activity;
+    private Integer code;
 
     public DBUSer() {
     }
 
     @Ignore
-    public DBUSer(User item) {
-        this._id = item.get_id();
-        this.name = item.getName();
-        this.family = item.getFamily();
-        this.phoneNumber = item.getPhoneNumber();
-
-        this.registerDay = item.getRegisterDay() != null ? item.getRegisterDay().toList() : null;
-        this.expireDay = item.getExpireDay() != null ? item.getExpireDay().toList() : null;
-        this.yellowDay = item.getYellowDay() != null ? item.getYellowDay().toList() : null;
-        this.orangeDay = item.getOrangeDay() != null ? item.getOrangeDay().toList() : null;
-        this.greenDay = item.getGreenDay() != null ? item.getGreenDay().toList() : null;
-        this.blueDay = item.getBlueDay() != null ? item.getBlueDay().toList() : null;
-        this.brownDay = item.getBrownDay() != null ? item.getBrownDay().toList() : null;
-        this.blackDay = item.getBlackDay() != null ? item.getBlackDay().toList() : null;
-        this.privateCheck = item.getIsPrivate();
-        this.activity = item.isActivity();
-
+    public DBUSer(String name, String family, String phoneNumber, Date registerDay, Date expireDay, Date yellowDay, Date orangeDay, Date greenDay, Date blueDay, Date brownDay, Date blackDay, boolean privateCheck,Integer code) {
+        this.name = name;
+        this.family = family;
+        this.phoneNumber = phoneNumber;
+        this.registerDay = registerDay;
+        this.expireDay = expireDay;
+        this.yellowDay = yellowDay;
+        this.orangeDay = orangeDay;
+        this.greenDay = greenDay;
+        this.blueDay = blueDay;
+        this.brownDay = brownDay;
+        this.blackDay = blackDay;
+        this.privateCheck = privateCheck;
+        this.code = code;
     }
 
     @NonNull
-    public String get_id() {
+    public Integer get_id() {
         return _id;
     }
 
-    public void set_id(@NonNull String _id) {
+    public void set_id(@NonNull Integer _id) {
         this._id = _id;
     }
 
@@ -90,100 +85,70 @@ public class DBUSer implements Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    public List<Integer> getRegisterDay() {
+    public Date getRegisterDay() {
         return registerDay;
     }
 
-    public void setRegisterDay(List<Integer> registerDay) {
+    public void setRegisterDay(Date registerDay) {
         this.registerDay = registerDay;
     }
 
-    public List<Integer> getExpireDay() {
+    public Date getExpireDay() {
         return expireDay;
     }
 
-    public void setExpireDay(List<Integer> expireDay) {
+    public void setExpireDay(Date expireDay) {
         this.expireDay = expireDay;
     }
 
-    public List<Integer> getYellowDay() {
+    public Date getYellowDay() {
         return yellowDay;
     }
 
-    public void setYellowDay(List<Integer> yellowDay) {
+    public void setYellowDay(Date yellowDay) {
         this.yellowDay = yellowDay;
     }
 
-    public List<Integer> getOrangeDay() {
+    public Date getOrangeDay() {
         return orangeDay;
     }
 
-    public void setOrangeDay(List<Integer> orangeDay) {
+    public void setOrangeDay(Date orangeDay) {
         this.orangeDay = orangeDay;
     }
 
-    public List<Integer> getGreenDay() {
+    public Date getGreenDay() {
         return greenDay;
     }
 
-    public void setGreenDay(List<Integer> greenDay) {
+    public void setGreenDay(Date greenDay) {
         this.greenDay = greenDay;
     }
 
-    public List<Integer> getBlueDay() {
+    public Date getBlueDay() {
         return blueDay;
     }
 
-    public void setBlueDay(List<Integer> blueDay) {
+    public void setBlueDay(Date blueDay) {
         this.blueDay = blueDay;
     }
 
-    public List<Integer> getBrownDay() {
+    public Date getBrownDay() {
         return brownDay;
     }
 
-    public void setBrownDay(List<Integer> brownDay) {
+    public void setBrownDay(Date brownDay) {
         this.brownDay = brownDay;
     }
 
-    public List<Integer> getBlackDay() {
+    public Date getBlackDay() {
         return blackDay;
     }
 
-    public void setBlackDay(List<Integer> blackDay) {
+    public void setBlackDay(Date blackDay) {
         this.blackDay = blackDay;
     }
 
-    public boolean isActivity() {
-        return activity;
-    }
-
-    public void setActivity(boolean activity) {
-        this.activity = activity;
-    }
-
-    @Ignore
-    public String toPersianNumber(String text) {
-        String[] persianNumbers = new String[]{"۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"};
-        if (text.length() == 0) {
-            return "";
-        }
-        StringBuilder out = new StringBuilder();
-        int length = text.length();
-        for (int i = 0; i < length; i++) {
-            char c = text.charAt(i);
-            if ('0' <= c && c <= '9') {
-                int number = Integer.parseInt(valueOf(c));
-                out.append(persianNumbers[number]);
-            } else if (c == '٫') {
-                out.append('،');
-            } else {
-                out.append(c);
-            }
-        }
-
-        return out.toString();
-    }
 
     public boolean isPrivateCheck() {
         return privateCheck;
@@ -191,11 +156,6 @@ public class DBUSer implements Serializable {
 
     public void setPrivateCheck(boolean privateCheck) {
         this.privateCheck = privateCheck;
-    }
-
-    @Ignore
-    MyDate getMyDate(List<Integer> integers) {
-        return (integers == null || integers.size() == 0)?null:new MyDate(integers.get(0),integers.get(1),integers.get(2));
     }
 
     @NonNull
@@ -216,7 +176,14 @@ public class DBUSer implements Serializable {
                 ", brownDay=" + brownDay +
                 ", blackDay=" + blackDay +
                 ", privateCheck=" + privateCheck +
-                ", activity=" + activity +
                 '}';
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
     }
 }

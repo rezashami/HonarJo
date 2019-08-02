@@ -1,21 +1,15 @@
-package com.example.reza.honarjo.Model.users;
-
-import android.arch.persistence.room.Ignore;
+package com.example.reza.honarjo.Model.queryResults;
 
 import java.io.Serializable;
+import java.util.Date;
 
-public class ShowingUser implements Serializable {
+public class ExpireNameFamilyID implements Serializable {
     private Integer _id;
     private String name;
     private String family;
-    @Ignore
-    public ShowingUser(Integer _id, String name, String family) {
-        this._id = _id;
-        this.name = name;
-        this.family = family;
-    }
+    private Date expireDay;
 
-    public ShowingUser() {
+    public ExpireNameFamilyID() {
     }
 
     public Integer get_id() {
@@ -40,5 +34,13 @@ public class ShowingUser implements Serializable {
 
     public void setFamily(String family) {
         this.family = family;
+    }
+
+    public Date getExpireDay() {
+        return expireDay;
+    }
+
+    public void setExpireDay(Date expireDay) {
+        this.expireDay = expireDay;
     }
 }

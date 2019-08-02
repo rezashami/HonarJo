@@ -2,17 +2,15 @@ package com.example.reza.honarjo.View.setting;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
-import com.example.reza.honarjo.MainActivity;
 import com.example.reza.honarjo.R;
-import com.example.reza.honarjo.Splash_screen;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -35,10 +33,7 @@ public class SettingActivity extends AppCompatActivity {
                         .setPositiveButton("بلی", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                preferenceManager.addToken(null);
-                                preferenceManager.setInsuranceFetch(false);
-                                preferenceManager.setUserFetch(false);
-                                lunchLogin();
+                                Toast.makeText(getApplicationContext(), "اتصال به اینترنت برقرار نمی‌باشد", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .setNegativeButton("خیر", null)
@@ -46,13 +41,6 @@ public class SettingActivity extends AppCompatActivity {
                         .show();
             }
         });
-    }
-
-    private void lunchLogin() {
-        Intent intent = new Intent(getApplicationContext(), Splash_screen.class);
-        MainActivity.mainActivity.finish();
-        startActivity(intent);
-        finish();
     }
 
     @Override

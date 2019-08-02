@@ -3,7 +3,6 @@ package com.example.reza.honarjo.Controller.DBUser;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.example.reza.honarjo.Controller.db.DaoAccess;
 import com.example.reza.honarjo.Controller.db.DatabaseManager;
@@ -32,6 +31,10 @@ public class UserRepository {
     public void insert(DBUSer dbuSer) {
         new insertAsyncTask(AlarmDao).execute(dbuSer);
     }
+    public void insertMany(List<DBUSer> list)
+    {
+        new insertManyAsyncTask(AlarmDao).execute(list);
+    }
 
     public void update(DBUSer dbuSer) {
         new updateAsyncTask(AlarmDao).execute(dbuSer);
@@ -51,8 +54,28 @@ public class UserRepository {
 
         @Override
         protected Void doInBackground(final DBUSer... params) {
-            Log.e("PRintttt", params[0].toString());
             mAsyncTaskDao.insertUser(params[0]);
+            return null;
+        }
+    }
+
+
+
+    private static class insertManyAsyncTask extends AsyncTask<List<DBUSer>, Void, Void> {
+
+        private DaoAccess mAsyncTaskDao;
+
+        insertManyAsyncTask(DaoAccess dao) {
+            mAsyncTaskDao = dao;
+        }
+
+
+        @Override
+        protected Void doInBackground(List<DBUSer>... params) {
+            for (int i= 0; i<params[0].size();i++)
+            {
+                mAsyncTaskDao.insertUser(params[0].get(i));
+            }
             return null;
         }
     }
@@ -98,7 +121,7 @@ public class UserRepository {
         }
     }
 
-    private class getUsersNames extends AsyncTask<Void, Void, LiveData<List<ShowingUser>>>{
+    private static class getUsersNames extends AsyncTask<Void, Void, LiveData<List<ShowingUser>>>{
         private DaoAccess mAsyncTaskDao;
         private String name;
         getUsersNames(DaoAccess dao, String query) {

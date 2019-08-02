@@ -13,9 +13,10 @@
 
         <TextView
             android:id="@+id/username_view_in_row"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:padding="16dp" />
+            android:padding="16dp"
+            android:textSize="@dimen/_16ssp" />
     </LinearLayout>
 </android.support.v7.widget.CardView>
