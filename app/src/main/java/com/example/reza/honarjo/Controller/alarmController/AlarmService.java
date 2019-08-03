@@ -1,4 +1,4 @@
-package com.example.reza.honarjo.Controller.insuaranceAlarm;
+package com.example.reza.honarjo.Controller.alarmController;
 
 import android.app.AlarmManager;
 import android.app.Application;

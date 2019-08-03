@@ -31,8 +31,9 @@ public class InsuranceRepository {
     public List<DBAlarm> getDBAlarms() throws ExecutionException, InterruptedException {
         return new GetDBAlarm(AppDao).execute().get();
     }
-    public void update(String id, List<Integer> expireDay) {
-        new updateAsyncTask(AppDao, id, expireDay).execute();
+
+    public void update(DBAlarm myDBAlarm) {
+        new updateAsyncTask(AppDao, myDBAlarm).execute();
     }
 
     public void insert(DBAlarm dbAlarm) {
@@ -47,22 +48,16 @@ public class InsuranceRepository {
         return new getDatesAsyncTask(AppDao).execute().get();
     }
 
-    private static class updateAsyncTask extends AsyncTask<Void, Void, Void> {
-        private DaoAccess mAsyncTaskDao;
-        private String _id;
-        private List<Integer> expireDay;
+    public DBAlarm getOneDBAlarmByDate(Date date) throws ExecutionException, InterruptedException {
+        return new GetOneUserById(date, AppDao).execute().get();
+    }
 
-        updateAsyncTask(DaoAccess alarmDao, String id, List<Integer> expireDay) {
-            mAsyncTaskDao = alarmDao;
-            _id = id;
-            this.expireDay = expireDay;
-        }
+    public void removeDBAlarm(DBAlarm dbAlarm) {
+        new DeleteAlarmAsyncTask(AppDao, dbAlarm).execute();
+    }
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            mAsyncTaskDao.updateInsurance(_id, expireDay);
-            return null;
-        }
+    public void insertMany(List<DBAlarm> list) {
+        new insertManyAsyncTask(AppDao).execute(list);
     }
 
     private static class queryAsyncTask extends AsyncTask<Void, Void, LiveData<List<DBAlarm>>> {
@@ -92,9 +87,21 @@ public class InsuranceRepository {
         }
     }
 
-    public void insertMany(List<DBAlarm> list)
-    {
-        new insertManyAsyncTask(AppDao).execute(list);
+    //This section is AsyncTask classes
+    private static class updateAsyncTask extends AsyncTask<Void, Void, Void> {
+        private final DBAlarm myDBAlarm;
+        private DaoAccess mAsyncTaskDao;
+
+        updateAsyncTask(DaoAccess alarmDao, DBAlarm dbAlarm) {
+            mAsyncTaskDao = alarmDao;
+            this.myDBAlarm = dbAlarm;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            mAsyncTaskDao.updateAlarm(myDBAlarm);
+            return null;
+        }
     }
 
     private static class insertAsyncTask extends AsyncTask<DBAlarm, Void, Void> {
@@ -112,7 +119,7 @@ public class InsuranceRepository {
         }
     }
 
-    private static class GetDBAlarm extends AsyncTask<Void, Void,List<DBAlarm>> {
+    private static class GetDBAlarm extends AsyncTask<Void, Void, List<DBAlarm>> {
         private final DaoAccess mAsyncTaskDao;
 
         private GetDBAlarm(DaoAccess mAsyncTaskDao) {
@@ -160,13 +167,47 @@ public class InsuranceRepository {
         }
 
 
+        @SafeVarargs
         @Override
-        protected Void doInBackground(List<DBAlarm>... params) {
-            for (int i= 0; i<params[0].size();i++)
-            {
+        protected final Void doInBackground(List<DBAlarm>... params) {
+            for (int i = 0; i < params[0].size(); i++) {
                 mAsyncTaskDao.insertAlarm(params[0].get(i));
             }
             return null;
         }
     }
+
+    private static class GetOneUserById extends AsyncTask<Void, Void, DBAlarm> {
+        final Date myDate;
+        final DaoAccess AppDao;
+
+        GetOneUserById(Date date, DaoAccess appDao) {
+            myDate = date;
+            AppDao = appDao;
+        }
+
+        @Override
+        protected DBAlarm doInBackground(Void... voids) {
+            return AppDao.getInsuranceByDate(myDate);
+        }
+    }
+
+    private static class DeleteAlarmAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        private final DBAlarm dbAlarm;
+        private DaoAccess mAsyncTaskDao;
+
+        DeleteAlarmAsyncTask(DaoAccess dao, DBAlarm dbAlarm) {
+            mAsyncTaskDao = dao;
+            this.dbAlarm = dbAlarm;
+        }
+
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            mAsyncTaskDao.removeAlarm(dbAlarm);
+            return null;
+        }
+    }
+
 }

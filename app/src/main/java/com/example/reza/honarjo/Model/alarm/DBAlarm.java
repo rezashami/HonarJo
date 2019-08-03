@@ -65,6 +65,18 @@ public class DBAlarm implements Serializable {
     }
 
     @Ignore
+    public void removeUser(Integer showingUserID) {
+        int userIndex = 0;
+        for (int i = 0; i < users.size(); i++) {
+            if (showingUserID.equals(users.get(i).get_id())) {
+                userIndex = i;
+                break;
+            }
+        }
+        users.remove(userIndex);
+    }
+
+    @Ignore
     @Override
     public String toString() {
         return "DBAlarm{" +

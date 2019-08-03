@@ -3,24 +3,28 @@ package com.example.reza.honarjo.View.user;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.reza.honarjo.Controller.db.DaoAccess;
-import com.example.reza.honarjo.Controller.db.DatabaseManager;
+import com.example.reza.honarjo.Controller.DBInsurance.InsuranceRepository;
+import com.example.reza.honarjo.Controller.DBUser.UserRepository;
+import com.example.reza.honarjo.Controller.alarmSetter.AlarmSetter;
+import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
+import com.example.reza.honarjo.Model.alarm.DBAlarm;
 import com.example.reza.honarjo.Model.users.DBUSer;
 import com.example.reza.honarjo.Model.users.ShowingUser;
 import com.example.reza.honarjo.R;
 
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -31,26 +35,30 @@ import static com.example.reza.honarjo.Controller.timeConverter.TimeConverter.to
 public class ShowUser extends AppCompatActivity {
 
     private static final int EDIT_USER_REQUEST_CODE = 1;
+    public final int EXP_CHANGE_CODE = 100;
     DBUSer dbuSer;
     ShowingUser showingUser;
-    DaoAccess AppDao;
+    UserRepository userRepository;
+    InsuranceRepository insuranceRepository;
     TextView nameFamily, phoneNumber, registerDay, expireDay, yellowDay, orangeDay, greenDay, blueDay, brownDay, blackDay, privateCheck;
+    PreferenceManager preferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DatabaseManager db = DatabaseManager.getDatabase(getApplication());
-        AppDao = db.daoAccess();
         setContentView(R.layout.activity_show_user);
         Toolbar toolbar = findViewById(R.id.show_user_toolbar);
         setSupportActionBar(toolbar);
         setTitle("اطلاعات کاربری");
+        userRepository = new UserRepository(getApplication());
+        insuranceRepository = new InsuranceRepository(getApplication());
+        preferenceManager = new PreferenceManager(getApplicationContext());
         Bundle b = this.getIntent().getExtras();
         if (b != null) {
             showingUser = (ShowingUser) b.getSerializable("User");
             try {
                 if (showingUser != null) {
-                    dbuSer = new GetAsync(showingUser.get_id(), AppDao).execute().get();
+                    dbuSer = userRepository.getUserById(showingUser.get_id());
                 }
                 renderUI();
             } catch (ExecutionException | InterruptedException e) {
@@ -91,10 +99,35 @@ public class ShowUser extends AppCompatActivity {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("حذف کاربر");
         alert.setMessage("آیا مطمئنید؟");
-        alert.setPositiveButton("بلی", (dialogInterface, i) -> Toast.makeText(getApplicationContext(), "تغییری اعمال نشد!", Toast.LENGTH_SHORT).show());
+        alert.setPositiveButton("بلی", (dialogInterface, i) -> {
+            deleteUser();
+            Toast.makeText(getApplicationContext(), "تغییری اعمال نشد!", Toast.LENGTH_SHORT).show();
+        });
         alert.setNegativeButton("خیر", (dialog, which) -> dialog.cancel());
         alert.show();
     }
+
+    private void deleteUser() {
+        try {
+            DBAlarm dbAlarm = insuranceRepository.getOneDBAlarmByDate(dbuSer.getExpireDay());
+            AlarmSetter alarmSetter = new AlarmSetter(getApplicationContext());
+            if (dbAlarm != null) {
+                if (dbAlarm.getUsers().size() == 1) {
+                    insuranceRepository.removeDBAlarm(dbAlarm);
+                    alarmSetter.cancelAlarm(dbAlarm);
+                } else {
+                    dbAlarm.removeUser(dbuSer.get_id());
+                }
+            }
+            userRepository.remove(dbuSer);
+            finish();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -117,20 +150,6 @@ public class ShowUser extends AppCompatActivity {
 
     }
 
-    private static class GetAsync extends AsyncTask<Void, Void, DBUSer> {
-        final Integer ID;
-        final DaoAccess AppDao;
-
-        GetAsync(Integer id, DaoAccess appDao) {
-            ID = id;
-            AppDao = appDao;
-        }
-
-        @Override
-        protected DBUSer doInBackground(Void... voids) {
-            return AppDao.getOneUser(ID);
-        }
-    }
 
     private void edit() {
         Intent myIntent = new Intent(getApplicationContext(), EditUser.class);
@@ -148,9 +167,50 @@ public class ShowUser extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == EDIT_USER_REQUEST_CODE && resultCode == RESULT_OK) {
-            //save and edit user online
+            Toast.makeText(getApplicationContext(), "تغییرات با موفقیت اعمال شد.", Toast.LENGTH_SHORT).show();
         } else if (requestCode == EDIT_USER_REQUEST_CODE && resultCode == RESULT_CANCELED) {
             Toast.makeText(getApplicationContext(), "تغییری اعمال نشد!", Toast.LENGTH_SHORT).show();
+        } else if (requestCode == EDIT_USER_REQUEST_CODE && resultCode == EXP_CHANGE_CODE) {
+            if (data != null) {
+                DBUSer retrievedUser = (DBUSer) data.getSerializableExtra(EditUser.USER_EXTRA_REPLY);
+                Date lastDate = (Date) data.getSerializableExtra(EditUser.DATE_EXTRA_REPLY);
+                try {
+                    DBAlarm dbAlarm = insuranceRepository.getOneDBAlarmByDate(retrievedUser.getExpireDay());
+                    DBAlarm lateDbAlarm = insuranceRepository.getOneDBAlarmByDate(lastDate);
+                    AlarmSetter alarmSetter = new AlarmSetter(getApplicationContext());
+                    if (dbAlarm == null) {
+                        Log.e("Edit user alarmCheck", "is null");
+                        DBAlarm newDBAlarm = new DBAlarm();
+                        newDBAlarm.setMyDate(retrievedUser.getExpireDay());
+                        newDBAlarm.addUser(new ShowingUser(dbuSer.get_id(), retrievedUser.getName(), retrievedUser.getFamily()));
+                        int _id = preferenceManager.inc();
+                        newDBAlarm.setId(_id);
+                        _id++;
+                        preferenceManager.setInc(_id);
+                        insuranceRepository.insert(newDBAlarm);
+                        alarmSetter.setOneAlarm(newDBAlarm);
+                    } else {
+                        Log.e("Edit user alarmCheck", "non null");
+                        dbAlarm.addUser(new ShowingUser(dbuSer.get_id(), retrievedUser.getName(), retrievedUser.getFamily()));
+                        insuranceRepository.update(dbAlarm);
+                        alarmSetter.setOneAlarm(dbAlarm);
+                    }
+                    if (lateDbAlarm != null) {
+                        if (lateDbAlarm.getUsers().size() == 1) {
+                            insuranceRepository.removeDBAlarm(lateDbAlarm);
+                            alarmSetter.cancelAlarm(lateDbAlarm);
+                        } else {
+                            lateDbAlarm.removeUser(dbuSer.get_id());
+                        }
+                    }
+
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
     }
 }

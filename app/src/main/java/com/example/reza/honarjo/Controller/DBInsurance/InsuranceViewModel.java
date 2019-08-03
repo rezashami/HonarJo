@@ -7,7 +7,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.example.reza.honarjo.Model.alarm.DBAlarm;
-import com.example.reza.honarjo.Model.insuranses.Insurance;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -34,10 +33,5 @@ public class InsuranceViewModel extends AndroidViewModel {
             e.printStackTrace();
         }
         return alarms;
-    }
-
-    public void update(String id, List<Integer> expireDay)
-    {
-        mRepository.update(id,expireDay);
     }
 }

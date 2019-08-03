@@ -2,25 +2,30 @@ package com.example.reza.honarjo.View.user;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.example.reza.honarjo.Controller.DBUser.UserRepository;
+import com.example.reza.honarjo.Controller.timeConverter.TimeConverter;
 import com.example.reza.honarjo.Model.users.DBUSer;
 import com.example.reza.honarjo.R;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
+import static com.example.reza.honarjo.Controller.timeConverter.TimeConverter.getDayString;
 
 public class EditUser extends AppCompatActivity {
 
@@ -35,6 +40,11 @@ public class EditUser extends AppCompatActivity {
             brownDay, brownMonth, brownYear,
             blackDay, blackMonth, blackYear;
     CheckBox privateCheck;
+    public static final String USER_EXTRA_REPLY = "com.example.reza.honarjo.View.user.USER_REPLY";
+    public static final String DATE_EXTRA_REPLY = "com.example.reza.honarjo.View.user.DATE_REPLY";
+    public final int EXP_CHANGE_CODE = 100;
+    UserRepository userRepository;
+    boolean EXPFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +53,12 @@ public class EditUser extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.edit_user_toolbar);
         setSupportActionBar(toolbar);
         setTitle("تغییر اطلاعات کاربر");
+        userRepository = new UserRepository(getApplication());
         Bundle b = this.getIntent().getExtras();
         if (b != null) {
             dbuSer = (DBUSer) b.getSerializable("User");
             if (dbuSer != null) {
-                Log.e("DBUSER", dbuSer.toString());
+                Log.e("DBUser", dbuSer.toString());
             }
         }
         renderUI();
@@ -116,27 +127,6 @@ public class EditUser extends AppCompatActivity {
         blackYear.setText(getDayString(dbuSer.getBlackDay(), 2));
     }
 
-    @NonNull
-    private String getDayString(Date input, int number) {
-        String result =" - ";
-        Calendar cal_alarm = Calendar.getInstance();
-        cal_alarm.setTime(input);
-        if (input == null)
-            return result;
-        if(number == 0)
-        {
-            result  = String.valueOf(cal_alarm.get(Calendar.YEAR));
-        }
-        else if(number == 1)
-        {
-            result  = String.valueOf(cal_alarm.get(Calendar.MONTH));
-        }
-        else if(number == 2)
-        {
-            result  = String.valueOf(cal_alarm.get(Calendar.DAY_OF_MONTH));
-        }
-        return result;
-    }
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -162,7 +152,23 @@ public class EditUser extends AppCompatActivity {
     }
 
     private void save() {
-       //save to db
+        if (!checkUI()) {
+            Toast.makeText(this, "موراد را پر کنید", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent();
+            DBUSer user = getUser();
+            user.set_id(dbuSer.get_id());
+            userRepository.update(user);
+            if (EXPFlag) {
+                intent.putExtra(USER_EXTRA_REPLY, user);
+                intent.putExtra(DATE_EXTRA_REPLY, dbuSer.getExpireDay());
+                setResult(EXP_CHANGE_CODE, intent);
+                finish();
+            } else {
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        }
     }
 
     void showDialog() {
@@ -170,7 +176,161 @@ public class EditUser extends AppCompatActivity {
         alert.setTitle("ویرایش اطلاعات");
         alert.setMessage("آیا تغییرات ذخیره شوند؟");
         alert.setPositiveButton("بلی", (dialog, which) -> save());
-        alert.setNegativeButton("خیر", (dialog, which) -> dialog.cancel());
+        alert.setNegativeButton("خیر", (dialog, which) -> {
+            Intent replyIntent = new Intent();
+            setResult(RESULT_CANCELED, replyIntent);
+            finish();
+        });
         alert.show();
+    }
+
+
+    private boolean checkUI() {
+        boolean flag = true;
+        if (TextUtils.isEmpty(name.getText())) {
+            name.setError("نام   را وارد کنید");
+            flag = false;
+        }
+        if (TextUtils.isEmpty(family.getText())) {
+            family.setError("نام خانوادگی را وارد کنید");
+            flag = false;
+        }
+        if (TextUtils.isEmpty(phoneNumber.getText())) {
+            phoneNumber.setError("تلفن را وارد کنید");
+            flag = false;
+        }
+        if (TextUtils.isEmpty(registerDay.getText())) {
+            registerDay.setError("روز را وارد کنید");
+            flag = false;
+        }
+        if (TextUtils.isEmpty(registerMonth.getText())) {
+            registerMonth.setError("ماه را وارد کنید");
+            flag = false;
+        }
+        if (TextUtils.isEmpty(registerYear.getText())) {
+            registerYear.setError("سال را وارد کنید");
+            flag = false;
+        }
+        if (TextUtils.isEmpty(expireDay.getText())) {
+            expireDay.setError(" روز را وارد کنید");
+            flag = false;
+        }
+        if (TextUtils.isEmpty(expireMonth.getText())) {
+            expireMonth.setError(" ماه را وارد کنید");
+            flag = false;
+        }
+        if (TextUtils.isEmpty(expireYear.getText())) {
+            expireYear.setError(" سال را وارد کنید");
+            flag = false;
+        }
+        return flag;
+    }
+
+
+    private DBUSer getUser() {
+        String _name = name.getText().toString();
+        String _family = family.getText().toString();
+        String _phoneNumber = phoneNumber.getText().toString();
+        boolean prv = privateCheck.isChecked();
+        int _registerDay, _registerMonth, _registerYear,
+                _expireDay, _expireMonth, _expireYear,
+                _yellowDay = 0, _yellowMonth = 0, _yellowYear = 0,
+                _orangeDay = 0, _orangeMonth = 0, _orangeYear = 0,
+                _greenDay = 0, _greenMonth = 0, _greenYear = 0,
+                _blueDay = 0, _blueMonth = 0, _blueYear = 0,
+                _brownDay = 0, _brownMonth = 0, _brownYear = 0,
+                _blackDay = 0, _blackMonth = 0, _blackYear = 0;
+        _registerDay = Integer.parseInt(registerDay.getText().toString());
+        _registerMonth = Integer.parseInt(registerMonth.getText().toString());
+        _registerYear = Integer.parseInt(registerYear.getText().toString());
+        _expireDay = Integer.parseInt(expireDay.getText().toString());
+        _expireMonth = Integer.parseInt(expireMonth.getText().toString());
+        _expireYear = Integer.parseInt(expireYear.getText().toString());
+        if (!TextUtils.isEmpty(yellowDay.getText())) {
+            _yellowDay = Integer.parseInt(yellowDay.getText().toString());
+        }
+        if (!TextUtils.isEmpty(yellowMonth.getText())) {
+            _yellowMonth = Integer.parseInt(yellowMonth.getText().toString());
+        }
+        if (!TextUtils.isEmpty(yellowYear.getText())) {
+            _yellowYear = Integer.parseInt(yellowYear.getText().toString());
+        }
+        if (!TextUtils.isEmpty(orangeDay.getText())) {
+            _orangeDay = Integer.parseInt(orangeDay.getText().toString());
+        }
+        if (!TextUtils.isEmpty(orangeMonth.getText())) {
+            _orangeMonth = Integer.parseInt(orangeMonth.getText().toString());
+        }
+        if (!TextUtils.isEmpty(orangeYear.getText())) {
+            _orangeYear = Integer.parseInt(orangeYear.getText().toString());
+        }
+        if (!TextUtils.isEmpty(greenDay.getText())) {
+            _greenDay = Integer.parseInt(greenDay.getText().toString());
+        }
+        if (!TextUtils.isEmpty(greenMonth.getText())) {
+            _greenMonth = Integer.parseInt(greenMonth.getText().toString());
+        }
+        if (!TextUtils.isEmpty(greenYear.getText())) {
+            _greenYear = Integer.parseInt(greenYear.getText().toString());
+        }
+        if (!TextUtils.isEmpty(blueDay.getText())) {
+            _blueDay = Integer.parseInt(blueDay.getText().toString());
+        }
+        if (!TextUtils.isEmpty(blueMonth.getText())) {
+            _blueMonth = Integer.parseInt(blueMonth.getText().toString());
+        }
+        if (!TextUtils.isEmpty(blueYear.getText())) {
+            _blueYear = Integer.parseInt(blueYear.getText().toString());
+        }
+        if (!TextUtils.isEmpty(brownDay.getText())) {
+            _brownDay = Integer.parseInt(brownDay.getText().toString());
+        }
+        if (!TextUtils.isEmpty(brownMonth.getText())) {
+            _brownMonth = Integer.parseInt(brownMonth.getText().toString());
+        }
+        if (!TextUtils.isEmpty(brownYear.getText())) {
+            _brownYear = Integer.parseInt(brownYear.getText().toString());
+        }
+        if (!TextUtils.isEmpty(blackDay.getText())) {
+            _blackDay = Integer.parseInt(blackDay.getText().toString());
+        }
+        if (!TextUtils.isEmpty(blackMonth.getText())) {
+            _blackMonth = Integer.parseInt(blackMonth.getText().toString());
+        }
+        if (!TextUtils.isEmpty(blackYear.getText())) {
+            _blackYear = Integer.parseInt(blackYear.getText().toString());
+        }
+        DBUSer res = new DBUSer(_name, _family, _phoneNumber,
+                ((_registerYear == 0) && (_registerMonth == 0) && (_registerDay == 0)) ?
+                        null : getDate(_registerYear, _registerMonth, _registerDay),
+                ((_expireYear == 0) && (_expireMonth == 0) && (_expireDay == 0)) ?
+                        null :
+                        getDate(_expireYear, _expireMonth, _expireDay),
+                ((_yellowYear == 0) && (_yellowMonth == 0) && (_yellowDay == 0)) ?
+                        null :
+                        getDate(_yellowYear, _yellowMonth, _yellowDay),
+                ((_orangeYear == 0) && (_orangeMonth == 0) && (_orangeDay == 0)) ?
+                        null :
+                        getDate(_orangeYear, _orangeMonth, _orangeDay),
+                ((_greenYear == 0) && (_greenMonth == 0) && (_greenDay == 0)) ?
+                        null :
+                        getDate(_greenYear, _greenMonth, _greenDay),
+                ((_blueYear == 0) && (_blueMonth == 0) && (_blueDay == 0)) ?
+                        null :
+                        getDate(_blueYear, _blueMonth, _blueDay),
+                ((_brownYear == 0) && (_brownMonth == 0) && (_brownDay == 0)) ?
+                        null :
+                        getDate(_brownYear, _brownMonth, _brownDay),
+                ((_blackYear == 0) && (_blackMonth == 0) && (_blackDay == 0)) ?
+                        null :
+                        getDate(_blackYear, _blackMonth, _blackDay),
+                prv, 0);
+        if (dbuSer.getExpireDay() != res.getExpireDay())
+            EXPFlag = true;
+        return res;
+    }
+
+    private Date getDate(Integer item1, Integer item2, Integer item3) {
+        return TimeConverter.getGEOTime(item1, item2, item3);
     }
 }

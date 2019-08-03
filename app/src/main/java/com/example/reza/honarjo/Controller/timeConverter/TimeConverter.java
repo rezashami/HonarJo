@@ -52,4 +52,27 @@ public class TimeConverter {
 
         return out.toString();
     }
+
+    public static String getDayString(Date input, int number) {
+        String result= "";
+        if (input == null)
+            return result;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(input);
+        PersianDate persianDate = new PersianDate();
+        int[] intDate = persianDate.toJalali(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH));
+        if(number == 2)
+        {
+            result  = String.valueOf(intDate[0]);
+        }
+        else if(number == 1)
+        {
+            result  = intDate[1] <10? "0"+intDate[1]: String.valueOf(intDate[1]);
+        }
+        else if(number == 0)
+        {
+            result  = intDate[2] <10? "0"+intDate[2]: String.valueOf(intDate[2]);
+        }
+        return result;
+    }
 }

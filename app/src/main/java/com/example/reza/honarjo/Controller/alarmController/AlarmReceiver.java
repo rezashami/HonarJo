@@ -1,4 +1,4 @@
-package com.example.reza.honarjo.Controller.insuaranceAlarm;
+package com.example.reza.honarjo.Controller.alarmController;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -45,7 +45,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                 .setLights(Color.RED, 3000, 3000);
                // .setSound(Uri.parse("uri://sadfasdfasdf.mp3"));
-        ;
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(alarm.getId(), builder.build());

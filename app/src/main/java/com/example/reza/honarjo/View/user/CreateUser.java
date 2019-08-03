@@ -1,6 +1,7 @@
 package com.example.reza.honarjo.View.user;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,16 +14,17 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.reza.honarjo.Controller.DBUser.UserRepository;
+import com.example.reza.honarjo.Controller.timeConverter.TimeConverter;
 import com.example.reza.honarjo.Model.users.DBUSer;
 import com.example.reza.honarjo.R;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class CreateUser extends AppCompatActivity {
 
+    public static final String USER_CREATE_REPLY = "com.example.reza.honarjo.View.user.USER_CREATE_REPLY";
     EditText name, family, phoneNumber,
             registerDay, registerMonth, registerYear,
             expireDay, expireMonth, expireYear,
@@ -96,11 +98,16 @@ public class CreateUser extends AppCompatActivity {
     }
 
     private void create() {
+        Intent intent = new Intent();
         if (!checkUI()) {
             Toast.makeText(this, "موراد را پر کنید", Toast.LENGTH_SHORT).show();
-            return;
+        } else {
+            DBUSer user = getUser();
+            userRepository.insert(user);
+            intent.putExtra(USER_CREATE_REPLY,user);
+            setResult(RESULT_OK, intent);
+            finish();
         }
-        // add to db
     }
 
     private boolean checkUI() {
@@ -223,7 +230,6 @@ public class CreateUser extends AppCompatActivity {
         }
         if (!TextUtils.isEmpty(yellowMonth.getText())) {
             _yellowMonth = Integer.parseInt(yellowMonth.getText().toString());
-
         }
         if (!TextUtils.isEmpty(yellowYear.getText())) {
             _yellowYear = Integer.parseInt(yellowYear.getText().toString());
@@ -284,7 +290,7 @@ public class CreateUser extends AppCompatActivity {
                         getDate(_yellowYear, _yellowMonth, _yellowDay),
                 ((_orangeYear == 0) && (_orangeMonth == 0) && (_orangeDay == 0)) ?
                         null :
-                        getDate(_orangeYear, _orangeYear, _orangeDay),
+                        getDate(_orangeYear, _orangeMonth, _orangeDay),
                 ((_greenYear == 0) && (_greenMonth == 0) && (_greenDay == 0)) ?
                         null :
                         getDate(_greenYear, _greenMonth, _greenDay),
@@ -297,12 +303,11 @@ public class CreateUser extends AppCompatActivity {
                 ((_blackYear == 0) && (_blackMonth == 0) && (_blackDay == 0)) ?
                         null :
                         getDate(_blackYear, _blackMonth, _blackDay),
-                prv,0); //code must be edit
+                prv, 0); //code must be edit
     }
+
     private Date getDate(Integer item1, Integer item2, Integer item3) {
-        Calendar cal_alarm = Calendar.getInstance();
-        cal_alarm.set(item1,item2,item3);
-        return cal_alarm.getTime();
+        return TimeConverter.getGEOTime(item1, item2, item3);
     }
 
 }

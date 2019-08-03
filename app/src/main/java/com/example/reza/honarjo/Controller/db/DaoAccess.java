@@ -27,13 +27,13 @@ public interface DaoAccess {
     void updateUser(DBUSer dbuSer);
 
     @Insert
-    void insertAlarm(DBAlarm dbuSer);
+    void insertAlarm(DBAlarm dbAlarm);
 
     @Delete
-    void removeAlarm(DBAlarm dbuSer);
+    void removeAlarm(DBAlarm dbAlarm);
 
     @Update
-    void updateAlarm(DBAlarm dbuSer);
+    void updateAlarm(DBAlarm dbAlarm);
 
     @Query("SELECT name,family,_id FROM users")
     LiveData<List<ShowingUser>> getAllUsers();
@@ -50,18 +50,13 @@ public interface DaoAccess {
     @Query("SELECT * FROM alarm")
     List<DBAlarm> getInsuranceList();
 
-    @Query("SELECT * FROM alarm WHERE myDate=:date")
-    DBAlarm getOneInsurance(List<Integer> date);
-
-    @Query("UPDATE users SET expireDay = :end_address WHERE _id = :tid")
-    void updateInsurance(String tid, List<Integer> end_address);
+    @Query("SELECT * FROM alarm WHERE myDate =:date")
+    DBAlarm getInsuranceByDate(Date date);
 
     @Query("select expireDay from users group by expireDay")
     List<Date> getDates();
 
     @Query("select expireDay,name,family,_id  from users")
     List<ExpireNameFamilyID> get2Column();
-//    @Query("select * from users group by expireDay")
-//    void func();
 
 }

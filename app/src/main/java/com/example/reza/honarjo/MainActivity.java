@@ -1,9 +1,7 @@
 package com.example.reza.honarjo;
 
-import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -16,7 +14,7 @@ import android.view.WindowManager;
 
 import com.example.reza.honarjo.Controller.DBInsurance.InsuranceRepository;
 import com.example.reza.honarjo.Controller.DBUser.UserRepository;
-import com.example.reza.honarjo.Controller.insuaranceAlarm.AlarmReceiver;
+import com.example.reza.honarjo.Controller.alarmSetter.AlarmSetter;
 import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
 import com.example.reza.honarjo.Controller.timeConverter.TimeConverter;
 import com.example.reza.honarjo.Model.alarm.DBAlarm;
@@ -53,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     UserRepository userRepository;
     List<DBAlarm> alarms;
     private String TAG = "MainActivity";
+    private AlarmSetter alarmSetter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         createNotificationChannel();
         mainActivity = this;
+        alarmSetter = new AlarmSetter(getApplicationContext());
         findViewById(R.id.main_content_users).setOnClickListener(v -> {
             Intent myIntent = new Intent(getApplicationContext(), UserListActivity.class);
             startActivity(myIntent);
@@ -102,72 +102,72 @@ public class MainActivity extends AppCompatActivity {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
-    private void setAlarm(List<DBAlarm> input) {
-        for (int i = 0; i < input.size(); i++) {
-            DBAlarm alarm = input.get(i);
-            Calendar cal_alarm = Calendar.getInstance();
-            if (alarm.getMyDate() == null) {
-                cal_alarm.setTime(new Date());
-                cal_alarm.add(Calendar.DATE, -1);
-                cal_alarm.set(Calendar.HOUR, 17);
-                cal_alarm.set(Calendar.MINUTE, 0);
-                cal_alarm.set(Calendar.SECOND, 0);
-            } else {
-                cal_alarm.setTime(alarm.getMyDate());
-                cal_alarm.set(Calendar.HOUR, 17);
-                cal_alarm.set(Calendar.MINUTE, 0);
-                cal_alarm.set(Calendar.SECOND, 0);
-            }
-            Intent intent = new Intent(MainActivity.this, AlarmReceiver.class);
-            Bundle b = new Bundle();
-            b.putSerializable("Alarm", alarm);
-            intent.putExtras(b);
-            PendingIntent pendingIntent;
-            pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarm.getId(), intent, 0);
-            AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-            Log.e(TAG, "Set to: " + cal_alarm.getTime().toString() + " and interval is: 7");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                if (alarmManager != null) {
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), pendingIntent);
-                }
-            } else {
-                if (alarmManager != null) {
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), pendingIntent);
-                }
-            }
-        }
-
-        //7 * 24 * 60 * 60 * 1000
-    }
-
-    void tempAlarm() {
-
-        Calendar cal_alarm = Calendar.getInstance();
-        cal_alarm.set(cal_alarm.get(Calendar.YEAR), cal_alarm.get(Calendar.MONTH), cal_alarm.get(Calendar.DAY_OF_MONTH), cal_alarm.get(Calendar.HOUR_OF_DAY), (cal_alarm.get(Calendar.MINUTE) + 1) % 60, cal_alarm.get(Calendar.SECOND));
-
-
-        Intent intent = new Intent(MainActivity.this, AlarmReceiver.class);
-        Bundle b = new Bundle();
-        b.putSerializable("Alarm", "Alarm");
-        intent.putExtras(b);
-        PendingIntent pendingIntent;
-        int _id = preferenceManager.inc();
-        Log.e(TAG, String.valueOf(_id));
-        pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), _id, intent, 0);
-        _id++;
-        preferenceManager.setInc(_id);
-        AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        Log.e(TAG, "Set to: " + cal_alarm.getTime().toString() + " and interval is: 7");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (alarmManager != null) {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), pendingIntent);
-            }
-        } else {
-            if (alarmManager != null) {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), pendingIntent);
-            }
-        }
-    }
+//    private void setAlarm(List<DBAlarm> input) {
+//        for (int i = 0; i < input.size(); i++) {
+//            DBAlarm alarm = input.get(i);
+//            Calendar cal_alarm = Calendar.getInstance();
+//            if (alarm.getMyDate() == null) {
+//                cal_alarm.setTime(new Date());
+//                cal_alarm.add(Calendar.DATE, -1);
+//                cal_alarm.set(Calendar.HOUR, 17);
+//                cal_alarm.set(Calendar.MINUTE, 0);
+//                cal_alarm.set(Calendar.SECOND, 0);
+//            } else {
+//                cal_alarm.setTime(alarm.getMyDate());
+//                cal_alarm.set(Calendar.HOUR, 17);
+//                cal_alarm.set(Calendar.MINUTE, 0);
+//                cal_alarm.set(Calendar.SECOND, 0);
+//            }
+//            Intent intent = new Intent(MainActivity.this, AlarmReceiver.class);
+//            Bundle b = new Bundle();
+//            b.putSerializable("Alarm", alarm);
+//            intent.putExtras(b);
+//            PendingIntent pendingIntent;
+//            pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarm.getId(), intent, 0);
+//            AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+//            Log.e(TAG, "Set to: " + cal_alarm.getTime().toString() + " and interval is: 7");
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//                if (alarmManager != null) {
+//                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), pendingIntent);
+//                }
+//            } else {
+//                if (alarmManager != null) {
+//                    alarmManager.set(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), pendingIntent);
+//                }
+//            }
+//        }
+//
+//        //7 * 24 * 60 * 60 * 1000
+//    }
+//
+//    void tempAlarm() {
+//
+//        Calendar cal_alarm = Calendar.getInstance();
+//        cal_alarm.set(cal_alarm.get(Calendar.YEAR), cal_alarm.get(Calendar.MONTH), cal_alarm.get(Calendar.DAY_OF_MONTH), cal_alarm.get(Calendar.HOUR_OF_DAY), (cal_alarm.get(Calendar.MINUTE) + 1) % 60, cal_alarm.get(Calendar.SECOND));
+//
+//
+//        Intent intent = new Intent(MainActivity.this, AlarmReceiver.class);
+//        Bundle b = new Bundle();
+//        b.putSerializable("Alarm", "Alarm");
+//        intent.putExtras(b);
+//        PendingIntent pendingIntent;
+//        int _id = preferenceManager.inc();
+//        Log.e(TAG, String.valueOf(_id));
+//        pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), _id, intent, 0);
+//        _id++;
+//        preferenceManager.setInc(_id);
+//        AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+//        Log.e(TAG, "Set to: " + cal_alarm.getTime().toString() + " and interval is: 7");
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            if (alarmManager != null) {
+//                alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), pendingIntent);
+//            }
+//        } else {
+//            if (alarmManager != null) {
+//                alarmManager.set(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), pendingIntent);
+//            }
+//        }
+//    }
 
     String loadJSONFromAsset() {
         String json;
@@ -306,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        setAlarm(result);
+        alarmSetter.setGroupAlarm(result);
         return result;
     }
 

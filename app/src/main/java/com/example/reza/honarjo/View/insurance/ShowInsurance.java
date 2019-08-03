@@ -69,7 +69,6 @@ public class ShowInsurance extends AppCompatActivity {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.user_list_toolbar, menu);
         MenuItem search = menu.findItem(R.id.user_list_search);
-
         search.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem menuItem) {

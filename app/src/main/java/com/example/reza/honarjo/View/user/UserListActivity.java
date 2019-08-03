@@ -12,16 +12,27 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.reza.honarjo.Controller.DBInsurance.InsuranceRepository;
 import com.example.reza.honarjo.Controller.DBUser.UserViewModel;
+import com.example.reza.honarjo.Controller.alarmSetter.AlarmSetter;
+import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
 import com.example.reza.honarjo.Controller.userRecyclerAdapter.LocalRecyclerAdapter;
+import com.example.reza.honarjo.Model.alarm.DBAlarm;
+import com.example.reza.honarjo.Model.users.DBUSer;
+import com.example.reza.honarjo.Model.users.ShowingUser;
 import com.example.reza.honarjo.R;
 
+import java.util.concurrent.ExecutionException;
+
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
+import static com.example.reza.honarjo.View.user.CreateUser.USER_CREATE_REPLY;
 
 public class UserListActivity extends AppCompatActivity {
 
@@ -33,6 +44,8 @@ public class UserListActivity extends AppCompatActivity {
 
     private boolean isSearchOpen;
     private LocalRecyclerAdapter adapter;
+    PreferenceManager preferenceManager;
+    private InsuranceRepository insuranceRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +73,8 @@ public class UserListActivity extends AppCompatActivity {
 
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
         userViewModel.getAllWords().observe(this, adapter::setDbUsers);
+        insuranceRepository = new InsuranceRepository(getApplication());
+        preferenceManager = new PreferenceManager(getApplicationContext());
     }
 
     @Override
@@ -120,7 +135,37 @@ public class UserListActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CREATE_USER_CODE && resultCode == RESULT_OK)
         {
-            Toast.makeText(this, "کاربر با موفقیت افزوده شد", Toast.LENGTH_SHORT).show();
+            if (data != null) {
+                Toast.makeText(this, "کاربر با موفقیت افزوده شد", Toast.LENGTH_SHORT).show();
+                DBUSer retrievedUser = (DBUSer) data.getSerializableExtra(USER_CREATE_REPLY);
+                try {
+                    DBAlarm dbAlarm= insuranceRepository.getOneDBAlarmByDate(retrievedUser.getExpireDay());
+                    AlarmSetter alarmSetter = new AlarmSetter(getApplicationContext());
+                    if (dbAlarm == null){
+                        Log.e("DBAlarmCheck","is null");
+                        DBAlarm newDBAlarm = new DBAlarm();
+                        newDBAlarm.setMyDate(retrievedUser.getExpireDay());
+                        newDBAlarm.addUser(new ShowingUser(retrievedUser.get_id(),retrievedUser.getName(),retrievedUser.getFamily()));
+                        int _id = preferenceManager.inc();
+                        newDBAlarm.setId(_id);
+                        _id++;
+                        preferenceManager.setInc(_id);
+                        insuranceRepository.insert(newDBAlarm);
+                        alarmSetter.setOneAlarm(newDBAlarm);
+                    }
+                    else{
+                        Log.e("DBAlarmCheck","non null");
+                        dbAlarm.addUser(new ShowingUser(retrievedUser.get_id(),retrievedUser.getName(),retrievedUser.getFamily()));
+                        insuranceRepository.update(dbAlarm);
+                        alarmSetter.setOneAlarm(dbAlarm);
+                    }
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
         else if(requestCode == CREATE_USER_CODE && resultCode == RESULT_CANCELED)
         {

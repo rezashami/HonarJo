@@ -25,14 +25,14 @@ public class UserRepository {
     }
 
     public LiveData<List<ShowingUser>> getUsersByName(String name) throws ExecutionException, InterruptedException {
-        return new getUsersNames(AlarmDao,name).execute().get();
+        return new getUsersNames(AlarmDao, name).execute().get();
     }
 
     public void insert(DBUSer dbuSer) {
         new insertAsyncTask(AlarmDao).execute(dbuSer);
     }
-    public void insertMany(List<DBUSer> list)
-    {
+
+    public void insertMany(List<DBUSer> list) {
         new insertManyAsyncTask(AlarmDao).execute(list);
     }
 
@@ -44,6 +44,12 @@ public class UserRepository {
         new deleteAsyncTask(AlarmDao).execute(dbuSer);
     }
 
+    public DBUSer getUserById(int id) throws ExecutionException, InterruptedException {
+        return new GetOneUserById(id, AlarmDao).execute().get();
+    }
+
+
+    //This section is AsyncTask classes
     private static class insertAsyncTask extends AsyncTask<DBUSer, Void, Void> {
 
         private DaoAccess mAsyncTaskDao;
@@ -59,8 +65,6 @@ public class UserRepository {
         }
     }
 
-
-
     private static class insertManyAsyncTask extends AsyncTask<List<DBUSer>, Void, Void> {
 
         private DaoAccess mAsyncTaskDao;
@@ -70,10 +74,10 @@ public class UserRepository {
         }
 
 
+        @SafeVarargs
         @Override
-        protected Void doInBackground(List<DBUSer>... params) {
-            for (int i= 0; i<params[0].size();i++)
-            {
+        protected final Void doInBackground(List<DBUSer>... params) {
+            for (int i = 0; i < params[0].size(); i++) {
                 mAsyncTaskDao.insertUser(params[0].get(i));
             }
             return null;
@@ -121,9 +125,10 @@ public class UserRepository {
         }
     }
 
-    private static class getUsersNames extends AsyncTask<Void, Void, LiveData<List<ShowingUser>>>{
+    private static class getUsersNames extends AsyncTask<Void, Void, LiveData<List<ShowingUser>>> {
         private DaoAccess mAsyncTaskDao;
         private String name;
+
         getUsersNames(DaoAccess dao, String query) {
             mAsyncTaskDao = dao;
             name = query;
@@ -132,6 +137,21 @@ public class UserRepository {
         @Override
         protected LiveData<List<ShowingUser>> doInBackground(Void... voids) {
             return mAsyncTaskDao.getUsersByName(name);
+        }
+    }
+
+    private static class GetOneUserById extends AsyncTask<Void, Void, DBUSer> {
+        final Integer ID;
+        final DaoAccess AppDao;
+
+        GetOneUserById(Integer id, DaoAccess appDao) {
+            ID = id;
+            AppDao = appDao;
+        }
+
+        @Override
+        protected DBUSer doInBackground(Void... voids) {
+            return AppDao.getOneUser(ID);
         }
     }
 }
