@@ -63,6 +63,9 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        <service android:name=".Controller.alarmController.AlarmSingleBackgroundService" android:enabled="true" />
+        <service android:name=".Controller.alarmController.AlarmGroupBackgroundService" android:enabled="true" />
+
     </application>
 
 </manifest>

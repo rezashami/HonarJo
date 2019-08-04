@@ -27,7 +27,6 @@ public class InsuranceRepository {
         return new queryAsyncTask(AppDao, isLoading).execute().get();
     }
 
-
     public List<DBAlarm> getDBAlarms() throws ExecutionException, InterruptedException {
         return new GetDBAlarm(AppDao).execute().get();
     }
@@ -49,8 +48,14 @@ public class InsuranceRepository {
     }
 
     public DBAlarm getOneDBAlarmByDate(Date date) throws ExecutionException, InterruptedException {
-        return new GetOneUserById(date, AppDao).execute().get();
+        return new GetOneUserByDate(date, AppDao).execute().get();
     }
+
+
+    public DBAlarm getOneDBAlarmByID(Integer id) throws ExecutionException, InterruptedException {
+        return new GetOneUserById(id, AppDao).execute().get();
+    }
+
 
     public void removeDBAlarm(DBAlarm dbAlarm) {
         new DeleteAlarmAsyncTask(AppDao, dbAlarm).execute();
@@ -177,11 +182,11 @@ public class InsuranceRepository {
         }
     }
 
-    private static class GetOneUserById extends AsyncTask<Void, Void, DBAlarm> {
+    private static class GetOneUserByDate extends AsyncTask<Void, Void, DBAlarm> {
         final Date myDate;
         final DaoAccess AppDao;
 
-        GetOneUserById(Date date, DaoAccess appDao) {
+        GetOneUserByDate(Date date, DaoAccess appDao) {
             myDate = date;
             AppDao = appDao;
         }
@@ -189,6 +194,21 @@ public class InsuranceRepository {
         @Override
         protected DBAlarm doInBackground(Void... voids) {
             return AppDao.getInsuranceByDate(myDate);
+        }
+    }
+
+    private static class GetOneUserById extends AsyncTask<Void, Void, DBAlarm> {
+        final Integer id;
+        final DaoAccess AppDao;
+
+        GetOneUserById(Integer id, DaoAccess appDao) {
+            this.id = id;
+            AppDao = appDao;
+        }
+
+        @Override
+        protected DBAlarm doInBackground(Void... voids) {
+            return AppDao.getInsuranceByID(id);
         }
     }
 

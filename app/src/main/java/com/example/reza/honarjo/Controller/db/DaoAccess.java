@@ -52,6 +52,8 @@ public interface DaoAccess {
 
     @Query("SELECT * FROM alarm WHERE myDate =:date")
     DBAlarm getInsuranceByDate(Date date);
+    @Query("SELECT * FROM alarm WHERE id =:id")
+    DBAlarm getInsuranceByID(Integer id);
 
     @Query("select expireDay from users group by expireDay")
     List<Date> getDates();
