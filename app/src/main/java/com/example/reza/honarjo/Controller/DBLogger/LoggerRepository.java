@@ -10,11 +10,11 @@ import com.example.reza.honarjo.Model.logger.DBLogger;
 
 import java.util.List;
 
-public class LoggerRepository {
+class LoggerRepository {
     private DaoAccess ReportDao;
     private LiveData<List<DBLogger>> reports;
 
-    public LoggerRepository(Application application) {
+    LoggerRepository(Application application) {
         DatabaseManager db = DatabaseManager.getDatabase(application);
         ReportDao = db.daoAccess();
         reports = ReportDao.getAllLogs();

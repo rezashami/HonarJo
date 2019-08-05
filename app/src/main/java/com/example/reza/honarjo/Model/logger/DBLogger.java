@@ -6,13 +6,12 @@ import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
 import com.example.reza.honarjo.Controller.db.DateConverter;
-import com.example.reza.honarjo.Controller.db.ListConverter;
 import com.example.reza.honarjo.Controller.db.UserListConverter;
 
 import java.io.Serializable;
 import java.util.Date;
 @Entity(tableName = "report")
-@TypeConverters({DateConverter.class, ListConverter.class, UserListConverter.class})
+@TypeConverters({DateConverter.class, UserListConverter.class})
 public class DBLogger implements Serializable{
     @PrimaryKey(autoGenerate = true)
     @NonNull

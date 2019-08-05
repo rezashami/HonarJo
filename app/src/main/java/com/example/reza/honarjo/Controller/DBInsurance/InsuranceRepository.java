@@ -23,7 +23,7 @@ public class InsuranceRepository {
         AppDao = db.daoAccess();
     }
 
-    public LiveData<List<DBAlarm>> getInsurances(MutableLiveData<Boolean> isLoading) throws ExecutionException, InterruptedException {
+    LiveData<List<DBAlarm>> getInsurances(MutableLiveData<Boolean> isLoading) throws ExecutionException, InterruptedException {
         return new queryAsyncTask(AppDao, isLoading).execute().get();
     }
 

@@ -30,7 +30,6 @@ public class InsuranceListActivity extends AppCompatActivity {
         final InsuranceRecyclerAdapter adapter = new InsuranceRecyclerAdapter( this, item -> {
             Intent myIntent = new Intent(getApplicationContext(), ShowInsurance.class);
             myIntent.putExtra("Insurance",item);
-            //startActivityForResult(myIntent,MEDICINE_WORK_ACTIVITY_REQUEST_CODE);
             startActivity(myIntent);
         });
         recyclerView = findViewById(R.id.insurance_content_list);

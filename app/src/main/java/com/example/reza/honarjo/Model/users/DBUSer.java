@@ -7,7 +7,6 @@ import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
 import com.example.reza.honarjo.Controller.db.DateConverter;
-import com.example.reza.honarjo.Controller.db.ListConverter;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -15,7 +14,7 @@ import java.util.Date;
 import static com.example.reza.honarjo.Controller.timeConverter.TimeConverter.getPersianDashedTime;
 
 @Entity(tableName = "users")
-@TypeConverters({ListConverter.class, DateConverter.class})
+@TypeConverters({DateConverter.class})
 public class DBUSer implements Serializable {
     @PrimaryKey(autoGenerate = true)
     @NonNull

@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.reza.honarjo.Controller.DBUser.UserRepository;
 import com.example.reza.honarjo.Controller.db.DatabaseManager;
+import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
 import com.example.reza.honarjo.Controller.timeConverter.TimeConverter;
 import com.example.reza.honarjo.Model.logger.DBLogger;
 import com.example.reza.honarjo.Model.users.DBUSer;
@@ -40,6 +41,8 @@ public class CreateUser extends AppCompatActivity {
     CheckBox privateCheck;
     private UserRepository userRepository;
 
+    PreferenceManager preferenceManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +50,7 @@ public class CreateUser extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.create_user_toolbar);
         setSupportActionBar(toolbar);
         setTitle("افزودن کاربر");
+        preferenceManager = new PreferenceManager(getApplicationContext());
         name = findViewById(R.id.create_user_name);
         family = findViewById(R.id.create_user_family);
         phoneNumber = findViewById(R.id.create_user_phone_number);
@@ -316,7 +320,7 @@ public class CreateUser extends AppCompatActivity {
                 ((_blackYear == 0) && (_blackMonth == 0) && (_blackDay == 0)) ?
                         null :
                         getDate(_blackYear, _blackMonth, _blackDay),
-                prv, 0); //code must be edit
+                prv, preferenceManager.getUserCode()); //code must be edit
     }
 
     private Date getDate(Integer item1, Integer item2, Integer item3) {

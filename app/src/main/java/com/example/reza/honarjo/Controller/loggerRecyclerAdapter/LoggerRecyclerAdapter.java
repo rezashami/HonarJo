@@ -21,9 +21,9 @@ public class LoggerRecyclerAdapter extends RecyclerView.Adapter<LoggerRecyclerAd
     private List<DBLogger> reports = Collections.emptyList();
 
 
-    public LoggerRecyclerAdapter(Context ctxt, OnItemClickListener listener) {
+    public LoggerRecyclerAdapter(Context context, OnItemClickListener listener) {
         this.listener = listener;
-        this.mInflater = LayoutInflater.from(ctxt);
+        this.mInflater = LayoutInflater.from(context);
     }
 
     public void setLogs(List<DBLogger> logs) {

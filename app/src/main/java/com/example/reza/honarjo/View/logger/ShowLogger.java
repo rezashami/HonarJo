@@ -38,8 +38,8 @@ public class ShowLogger extends AppCompatActivity {
             if (logger != null) {
                 txt_header.setText(logger.getHeader());
                 txt_body.setText(logger.getBody());
-                PersianDate pdate = new PersianDate(logger.getDate().getTime());
-                txt_date.setText(pdate.toString());
+                PersianDate persianDate = new PersianDate(logger.getDate().getTime());
+                txt_date.setText(persianDate.toString());
             }
         }
     }
@@ -84,9 +84,7 @@ public class ShowLogger extends AppCompatActivity {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("حذف کاربر");
         alert.setMessage("آیا مطمئنید؟");
-        alert.setPositiveButton("بلی", (dialogInterface, i) -> {
-            deleteLogger();
-        });
+        alert.setPositiveButton("بلی", (dialogInterface, i) -> deleteLogger());
         alert.setNegativeButton("خیر", (dialog, which) -> dialog.cancel());
         alert.show();
     }

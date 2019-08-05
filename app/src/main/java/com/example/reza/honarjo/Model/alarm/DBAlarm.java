@@ -7,7 +7,6 @@ import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
 import com.example.reza.honarjo.Controller.db.DateConverter;
-import com.example.reza.honarjo.Controller.db.ListConverter;
 import com.example.reza.honarjo.Controller.db.UserListConverter;
 import com.example.reza.honarjo.Model.users.ShowingUser;
 
@@ -19,7 +18,7 @@ import java.util.List;
 import saman.zamani.persiandate.PersianDate;
 
 @Entity(tableName = "alarm")
-@TypeConverters({ListConverter.class, UserListConverter.class, DateConverter.class})
+@TypeConverters({UserListConverter.class, DateConverter.class})
 public class DBAlarm implements Serializable {
     @NonNull
     @PrimaryKey

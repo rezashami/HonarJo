@@ -14,7 +14,6 @@ import java.util.concurrent.ExecutionException;
 public class UserViewModel extends AndroidViewModel {
 
     private UserRepository mRepository;
-    private LiveData<List<ShowingUser>> users;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
@@ -22,7 +21,7 @@ public class UserViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<ShowingUser>> getAllWords() {
-        users = null;
+        LiveData<List<ShowingUser>> users = null;
         try {
             users = mRepository.getUsers();
         } catch (ExecutionException | InterruptedException e) {
@@ -44,14 +43,4 @@ public class UserViewModel extends AndroidViewModel {
     public void insert(DBUSer dbuSer) {
         mRepository.insert(dbuSer);
     }
-
-    public void update(DBUSer dbuSer) {
-        mRepository.update(dbuSer);
-    }
-
-    public void remove(DBUSer dbuSer) {
-        mRepository.remove(dbuSer);
-    }
-
-
 }

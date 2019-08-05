@@ -24,7 +24,7 @@ public class UserRepository {
         return new queryAsyncTask(AlarmDao).execute().get();
     }
 
-    public LiveData<List<ShowingUser>> getUsersByName(String name) throws ExecutionException, InterruptedException {
+    LiveData<List<ShowingUser>> getUsersByName(String name) throws ExecutionException, InterruptedException {
         return new getUsersNames(AlarmDao, name).execute().get();
     }
 
