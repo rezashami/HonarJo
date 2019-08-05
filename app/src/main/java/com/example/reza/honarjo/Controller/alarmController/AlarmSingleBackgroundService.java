@@ -10,17 +10,41 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
 import com.example.reza.honarjo.Controller.DBInsurance.InsuranceRepository;
+import com.example.reza.honarjo.Controller.db.DatabaseManager;
 import com.example.reza.honarjo.Model.alarm.DBAlarm;
+import com.example.reza.honarjo.Model.logger.DBLogger;
 import com.example.reza.honarjo.R;
 import com.example.reza.honarjo.View.insurance.InsuranceListActivity;
 
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
+
+import saman.zamani.persiandate.PersianDate;
 
 public class AlarmSingleBackgroundService extends Service {
     public static final String NOTIFICATION_CHANNEL_ID = "my_channel_id_01";
     DBAlarm alarm;
 
     public void setAlarm(DBAlarm _alarm) {
+        class RUN implements Runnable{
+            private final DBAlarm dbAlarm;
+            private RUN(DBAlarm alarm)
+            {
+                this.dbAlarm = alarm;
+            }
+            @Override
+            public void run() {
+                DBLogger report = new DBLogger();
+                PersianDate persianDate = new PersianDate(new Date().getTime());
+                String header = "نمایش هشدار، در تاریخ: " + persianDate.toString();
+                report.setHeader(header);
+                report.setBody(dbAlarm.toString());
+                report.setDate(new Date());
+                DatabaseManager databaseHelper = DatabaseManager.getDatabase(getApplicationContext());
+                databaseHelper.daoAccess().insertLog(report);
+            }
+        }
+        new Thread(new RUN(_alarm)).start();
         InsuranceRepository insuranceRepository = new InsuranceRepository(getApplication());
         try {
             DBAlarm dbAlarm = insuranceRepository.getOneDBAlarmByID(1);

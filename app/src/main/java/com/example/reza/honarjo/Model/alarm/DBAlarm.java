@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import saman.zamani.persiandate.PersianDate;
+
 @Entity(tableName = "alarm")
 @TypeConverters({ListConverter.class, UserListConverter.class, DateConverter.class})
 public class DBAlarm implements Serializable {
@@ -79,10 +81,20 @@ public class DBAlarm implements Serializable {
     @Ignore
     @Override
     public String toString() {
-        return "DBAlarm{" +
-                "id=" + id +
-                ", myDate=" + myDate +
-                ", users=" + users.size() +
-                '}';
+
+        String da;
+        if (myDate == null) da = "ثبت نشده";
+        else {
+            PersianDate persianDate = new PersianDate(myDate.getTime());
+            da = persianDate.toString();
+        }
+        StringBuilder printUsers = new StringBuilder();
+        for (int i = 0; i < users.size(); i++) {
+            printUsers.append(users.toString()).append("\n");
+        }
+
+        return "هشدار :" + "\n" +
+                "در تاریخ: " + da + "\n"+
+                " مشخصات کاربران: " + printUsers.toString();
     }
 }

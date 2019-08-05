@@ -21,8 +21,8 @@ import com.example.reza.honarjo.Model.alarm.DBAlarm;
 import com.example.reza.honarjo.Model.queryResults.ExpireNameFamilyID;
 import com.example.reza.honarjo.Model.users.DBUSer;
 import com.example.reza.honarjo.Model.users.ShowingUser;
-import com.example.reza.honarjo.View.history.HistoryActivity;
 import com.example.reza.honarjo.View.insurance.InsuranceListActivity;
+import com.example.reza.honarjo.View.logger.LoggerListActivity;
 import com.example.reza.honarjo.View.setting.SettingActivity;
 import com.example.reza.honarjo.View.user.UserListActivity;
 
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(myIntent);
         });
         findViewById(R.id.main_content_history).setOnClickListener(v -> {
-            Intent myIntent = new Intent(getApplicationContext(), HistoryActivity.class);
+            Intent myIntent = new Intent(getApplicationContext(), LoggerListActivity.class);
             startActivity(myIntent);
         });
         findViewById(R.id.main_content_setting).setOnClickListener(v -> {

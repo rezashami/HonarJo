@@ -8,6 +8,7 @@ import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
 import com.example.reza.honarjo.Model.alarm.DBAlarm;
+import com.example.reza.honarjo.Model.logger.DBLogger;
 import com.example.reza.honarjo.Model.queryResults.ExpireNameFamilyID;
 import com.example.reza.honarjo.Model.users.DBUSer;
 import com.example.reza.honarjo.Model.users.ShowingUser;
@@ -35,6 +36,13 @@ public interface DaoAccess {
     @Update
     void updateAlarm(DBAlarm dbAlarm);
 
+
+    @Insert
+    void insertLog(DBLogger dbLogger);
+
+    @Delete
+    void removeLog(DBLogger dbLogger);
+
     @Query("SELECT name,family,_id FROM users")
     LiveData<List<ShowingUser>> getAllUsers();
 
@@ -47,11 +55,15 @@ public interface DaoAccess {
     @Query("SELECT * FROM alarm")
     LiveData<List<DBAlarm>> getAllInsurances();
 
+    @Query("SELECT * FROM report")
+    LiveData<List<DBLogger>> getAllLogs();
+
     @Query("SELECT * FROM alarm")
     List<DBAlarm> getInsuranceList();
 
     @Query("SELECT * FROM alarm WHERE myDate =:date")
     DBAlarm getInsuranceByDate(Date date);
+
     @Query("SELECT * FROM alarm WHERE id =:id")
     DBAlarm getInsuranceByID(Integer id);
 
@@ -60,5 +72,4 @@ public interface DaoAccess {
 
     @Query("select expireDay,name,family,_id  from users")
     List<ExpireNameFamilyID> get2Column();
-
 }

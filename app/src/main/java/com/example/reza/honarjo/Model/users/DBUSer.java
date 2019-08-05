@@ -12,6 +12,8 @@ import com.example.reza.honarjo.Controller.db.ListConverter;
 import java.io.Serializable;
 import java.util.Date;
 
+import static com.example.reza.honarjo.Controller.timeConverter.TimeConverter.getPersianDashedTime;
+
 @Entity(tableName = "users")
 @TypeConverters({ListConverter.class, DateConverter.class})
 public class DBUSer implements Serializable {
@@ -162,21 +164,28 @@ public class DBUSer implements Serializable {
     @Ignore
     @Override
     public String toString() {
-        return "DBUSer{" +
-                "_id='" + _id + '\'' +
-                ", name='" + name + '\'' +
-                ", family='" + family + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", registerDay=" + registerDay +
-                ", expireDay=" + expireDay +
-                ", yellowDay=" + yellowDay +
-                ", orangeDay=" + orangeDay +
-                ", greenDay=" + greenDay +
-                ", blueDay=" + blueDay +
-                ", brownDay=" + brownDay +
-                ", blackDay=" + blackDay +
-                ", privateCheck=" + privateCheck +
-                '}';
+        String _registerDay = getPersianDashedTime(registerDay);
+        String _expireDay = getPersianDashedTime(expireDay);
+        String _yellowDay = getPersianDashedTime(yellowDay);
+        String _orangeDay = getPersianDashedTime(orangeDay);
+        String _greenDay =getPersianDashedTime(greenDay);
+        String _blueDay = getPersianDashedTime(blueDay);
+        String _brownDay = getPersianDashedTime(brownDay);
+        String _blackDay = getPersianDashedTime(blackDay);
+        String prv = privateCheck ? "بله": "خیر";
+        return "کاربر: " +
+                " نام: " + name + '\'' +
+                " نام خانوادگی: " + family + '\'' +
+                " شماره تماس: " + phoneNumber + '\'' +
+                " تاریخ عضویت: " + _registerDay +
+                " تاریخ انقضای بیمه: " + _expireDay +
+                " تاریخ اخذ کمربند زرد: " + _yellowDay+
+                " تاریخ اخذ کمربند نارنجی: " + _orangeDay +
+                " تاریخ اخذ کمربند سبز: " + _greenDay +
+                " تاریخ اخذ کمربند آبی: " + _blueDay +
+                " تاریخ اخذ کمربند قهوه‌ای: " + _brownDay +
+                " تاریخ اخذ کمربند مشکی: " + _blackDay +
+                " ثبت‌نام در کلاس خصوصی" + prv ;
     }
 
     public Integer getCode() {

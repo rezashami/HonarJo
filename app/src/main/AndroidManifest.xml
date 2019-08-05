@@ -20,11 +20,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".View.logger.ShowLogger"></activity>
         <activity
             android:name=".View.insurance.ShowInsurance"
             android:label="@string/title_activity_show_insurance"
             android:theme="@style/AppTheme" />
-        <activity android:name=".View.history.HistoryActivity" />
+        <activity android:name=".View.logger.LoggerListActivity" />
         <activity android:name=".View.setting.SettingActivity" />
         <activity
             android:name=".MainActivity"
@@ -58,14 +59,22 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".Controller.alarmController.AlarmService" android:enabled="true" android:exported="false" android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+        <receiver
+            android:name=".Controller.alarmController.AlarmService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <service android:name=".Controller.alarmController.AlarmSingleBackgroundService" android:enabled="true" />
-        <service android:name=".Controller.alarmController.AlarmGroupBackgroundService" android:enabled="true" />
 
+        <service
+            android:name=".Controller.alarmController.AlarmSingleBackgroundService"
+            android:enabled="true" />
+        <service
+            android:name=".Controller.alarmController.AlarmGroupBackgroundService"
+            android:enabled="true" />
     </application>
 
 </manifest>

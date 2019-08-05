@@ -18,8 +18,10 @@ import android.widget.Toast;
 import com.example.reza.honarjo.Controller.DBInsurance.InsuranceRepository;
 import com.example.reza.honarjo.Controller.DBUser.UserRepository;
 import com.example.reza.honarjo.Controller.alarmSetter.AlarmSetter;
+import com.example.reza.honarjo.Controller.db.DatabaseManager;
 import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
 import com.example.reza.honarjo.Model.alarm.DBAlarm;
+import com.example.reza.honarjo.Model.logger.DBLogger;
 import com.example.reza.honarjo.Model.users.DBUSer;
 import com.example.reza.honarjo.Model.users.ShowingUser;
 import com.example.reza.honarjo.R;
@@ -27,6 +29,7 @@ import com.example.reza.honarjo.R;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
+import saman.zamani.persiandate.PersianDate;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static com.example.reza.honarjo.Controller.timeConverter.TimeConverter.getPersianDashedTime;
@@ -120,6 +123,16 @@ public class ShowUser extends AppCompatActivity {
                 }
             }
             userRepository.remove(dbuSer);
+            new Thread(() -> {
+                DBLogger report = new DBLogger();
+                PersianDate persianDate = new PersianDate(new Date().getTime());
+                String header = "حذف کاربر، در تاریخ: " + persianDate.toString();
+                report.setHeader(header);
+                report.setBody(dbuSer.toString());
+                report.setDate(new Date());
+                DatabaseManager databaseHelper = DatabaseManager.getDatabase(getApplicationContext());
+                databaseHelper.daoAccess().insertLog(report);
+            }).start();
             finish();
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -167,12 +180,36 @@ public class ShowUser extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == EDIT_USER_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (data != null) {
+                DBUSer retrievedUser = (DBUSer) data.getSerializableExtra(EditUser.USER_EXTRA_REPLY);
+                new Thread(() -> {
+                    DBLogger report = new DBLogger();
+                    PersianDate persianDate = new PersianDate(new Date().getTime());
+                    String header = "اصلاح کاربر، در تاریخ: " + persianDate.toString();
+                    report.setHeader(header);
+                    report.setBody(retrievedUser.toString());
+                    report.setDate(new Date());
+                    DatabaseManager databaseHelper = DatabaseManager.getDatabase(getApplicationContext());
+                    databaseHelper.daoAccess().insertLog(report);
+                }).start();
+            }
+
             Toast.makeText(getApplicationContext(), "تغییرات با موفقیت اعمال شد.", Toast.LENGTH_SHORT).show();
         } else if (requestCode == EDIT_USER_REQUEST_CODE && resultCode == RESULT_CANCELED) {
             Toast.makeText(getApplicationContext(), "تغییری اعمال نشد!", Toast.LENGTH_SHORT).show();
         } else if (requestCode == EDIT_USER_REQUEST_CODE && resultCode == EXP_CHANGE_CODE) {
             if (data != null) {
                 DBUSer retrievedUser = (DBUSer) data.getSerializableExtra(EditUser.USER_EXTRA_REPLY);
+                new Thread(() -> {
+                    DBLogger report = new DBLogger();
+                    PersianDate persianDate = new PersianDate(new Date().getTime());
+                    String header = "تمدید بیمه کاربر، در تاریخ: " + persianDate.toString();
+                    report.setHeader(header);
+                    report.setBody(retrievedUser.toString());
+                    report.setDate(new Date());
+                    DatabaseManager databaseHelper = DatabaseManager.getDatabase(getApplicationContext());
+                    databaseHelper.daoAccess().insertLog(report);
+                }).start();
                 Date lastDate = (Date) data.getSerializableExtra(EditUser.DATE_EXTRA_REPLY);
                 try {
                     DBAlarm dbAlarm = insuranceRepository.getOneDBAlarmByDate(retrievedUser.getExpireDay());

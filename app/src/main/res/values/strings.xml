@@ -29,4 +29,6 @@
     <string name="title_activity_show_insurance">نمایش بیمه</string>
     <string name="show">نمایش</string>
     <string name="channel_name">هشدار اتمام زمان بیمه</string>
+    <string name="clear_history">پاک کردن سابقه</string>
+    <string name="share_history">به اشتراک گذاری سابقه</string>
 </resources>

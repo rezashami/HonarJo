@@ -14,12 +14,15 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.reza.honarjo.Controller.DBUser.UserRepository;
+import com.example.reza.honarjo.Controller.db.DatabaseManager;
 import com.example.reza.honarjo.Controller.timeConverter.TimeConverter;
+import com.example.reza.honarjo.Model.logger.DBLogger;
 import com.example.reza.honarjo.Model.users.DBUSer;
 import com.example.reza.honarjo.R;
 
 import java.util.Date;
 
+import saman.zamani.persiandate.PersianDate;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class CreateUser extends AppCompatActivity {
@@ -105,6 +108,16 @@ public class CreateUser extends AppCompatActivity {
             DBUSer user = getUser();
             userRepository.insert(user);
             intent.putExtra(USER_CREATE_REPLY,user);
+            new Thread(() -> {
+                DBLogger report = new DBLogger();
+                PersianDate persianDate = new PersianDate(new Date().getTime());
+                String header = "افزودن کاربر، در تاریخ: " + persianDate.toString();
+                report.setHeader(header);
+                report.setBody(user.toString());
+                report.setDate(new Date());
+                DatabaseManager databaseHelper = DatabaseManager.getDatabase(getApplicationContext());
+                databaseHelper.daoAccess().insertLog(report);
+            }).start();
             setResult(RESULT_OK, intent);
             finish();
         }

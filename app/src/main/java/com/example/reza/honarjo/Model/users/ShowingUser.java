@@ -41,4 +41,10 @@ public class ShowingUser implements Serializable {
     public void setFamily(String family) {
         this.family = family;
     }
+
+
+    @Override
+    public String toString() {
+        return " نام و نام خانوادگی: " + name + ' ' + family;
+    }
 }

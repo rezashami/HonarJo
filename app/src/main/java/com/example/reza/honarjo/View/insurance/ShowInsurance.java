@@ -1,7 +1,6 @@
 package com.example.reza.honarjo.View.insurance;
 
 import android.app.SearchManager;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.example.reza.honarjo.Controller.DBUser.UserViewModel;
 import com.example.reza.honarjo.Controller.userRecyclerAdapter.LocalRecyclerAdapter;
 import com.example.reza.honarjo.Model.alarm.DBAlarm;
 import com.example.reza.honarjo.Model.users.ShowingUser;
@@ -23,6 +21,7 @@ import com.example.reza.honarjo.R;
 import com.example.reza.honarjo.View.user.ShowUser;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -31,8 +30,8 @@ import static com.example.reza.honarjo.Controller.timeConverter.TimeConverter.ge
 
 public class ShowInsurance extends AppCompatActivity {
     private DBAlarm dbAlarm;
-    private UserViewModel userViewModel;
     private LocalRecyclerAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +44,12 @@ public class ShowInsurance extends AppCompatActivity {
             dbAlarm = (DBAlarm) b.getSerializable("Insurance");
         }
         TextView txt = findViewById(R.id.show_insurance_expireDay);
-        txt.setText(getPersianDashedTime(dbAlarm.getMyDate()));
+
+        if (dbAlarm.getMyDate().before(new Date())) {
+            txt.setText("منقضی شده");
+        } else {
+            txt.setText(getPersianDashedTime(dbAlarm.getMyDate()));
+        }
         adapter = new LocalRecyclerAdapter(this, item -> {
             Intent myIntent = new Intent(getApplicationContext(), ShowUser.class);
             myIntent.putExtra("User", item);
@@ -55,7 +59,6 @@ public class ShowInsurance extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.show_insurance_recycler);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
     }
 
     @Override
@@ -100,12 +103,10 @@ public class ShowInsurance extends AppCompatActivity {
             }
 
             private void getDealsFromDb(String searchText) {
-                String regex = ".*"+searchText+".*";
+                String regex = ".*" + searchText + ".*";
                 List<ShowingUser> result = new ArrayList<>();
-                for (ShowingUser item: dbAlarm.getUsers())
-                {
-                    if (item.getFamily().matches(regex) ||item.getName().matches(regex) )
-                    {
+                for (ShowingUser item : dbAlarm.getUsers()) {
+                    if (item.getFamily().matches(regex) || item.getName().matches(regex)) {
                         result.add(item);
                     }
                 }
