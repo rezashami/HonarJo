@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.reza.honarjo.Controller.DBUser.UserRepository;
+import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
 import com.example.reza.honarjo.Controller.timeConverter.TimeConverter;
 import com.example.reza.honarjo.Model.users.DBUSer;
 import com.example.reza.honarjo.R;
@@ -45,6 +46,7 @@ public class EditUser extends AppCompatActivity {
     public final int EXP_CHANGE_CODE = 100;
     UserRepository userRepository;
     boolean EXPFlag = false;
+    private PreferenceManager preferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,7 @@ public class EditUser extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.edit_user_toolbar);
         setSupportActionBar(toolbar);
         setTitle("تغییر اطلاعات کاربر");
+        preferenceManager = new PreferenceManager(getApplication());
         userRepository = new UserRepository(getApplication());
         Bundle b = this.getIntent().getExtras();
         if (b != null) {
@@ -300,7 +303,8 @@ public class EditUser extends AppCompatActivity {
         if (!TextUtils.isEmpty(blackYear.getText())) {
             _blackYear = Integer.parseInt(blackYear.getText().toString());
         }
-        DBUSer res = new DBUSer(_name, _family, _phoneNumber,
+        int code =preferenceManager.getUserCode();
+        DBUSer res = new DBUSer(code,_name, _family, _phoneNumber,
                 ((_registerYear == 0) && (_registerMonth == 0) && (_registerDay == 0)) ?
                         null : getDate(_registerYear, _registerMonth, _registerDay),
                 ((_expireYear == 0) && (_expireMonth == 0) && (_expireDay == 0)) ?
@@ -324,9 +328,11 @@ public class EditUser extends AppCompatActivity {
                 ((_blackYear == 0) && (_blackMonth == 0) && (_blackDay == 0)) ?
                         null :
                         getDate(_blackYear, _blackMonth, _blackDay),
-                prv, 0);
+                prv, code);
         if (dbuSer.getExpireDay() != res.getExpireDay())
             EXPFlag = true;
+        code++;
+        preferenceManager.setUserCode(code);
         return res;
     }
 

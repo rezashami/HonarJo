@@ -142,10 +142,10 @@ public class UserListActivity extends AppCompatActivity {
                     DBAlarm dbAlarm= insuranceRepository.getOneDBAlarmByDate(retrievedUser.getExpireDay());
                     AlarmSetter alarmSetter = new AlarmSetter(getApplicationContext());
                     if (dbAlarm == null){
-                        Log.e("DBAlarmCheck","is null");
                         DBAlarm newDBAlarm = new DBAlarm();
                         newDBAlarm.setMyDate(retrievedUser.getExpireDay());
                         newDBAlarm.addUser(new ShowingUser(retrievedUser.get_id(),retrievedUser.getName(),retrievedUser.getFamily()));
+                        Log.e("RetriedUser", String.valueOf(retrievedUser.get_id()));
                         int _id = preferenceManager.inc();
                         newDBAlarm.setId(_id);
                         _id++;
@@ -154,7 +154,7 @@ public class UserListActivity extends AppCompatActivity {
                         alarmSetter.setOneAlarm(newDBAlarm);
                     }
                     else{
-                        Log.e("DBAlarmCheck","non null");
+                        Log.e("RetriedUser", String.valueOf(retrievedUser.get_id()));
                         dbAlarm.addUser(new ShowingUser(retrievedUser.get_id(),retrievedUser.getName(),retrievedUser.getFamily()));
                         insuranceRepository.update(dbAlarm);
                         alarmSetter.setOneAlarm(dbAlarm);

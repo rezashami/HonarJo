@@ -1,19 +1,28 @@
 package com.example.reza.honarjo;
 
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.example.reza.honarjo.Controller.DBInsurance.InsuranceRepository;
 import com.example.reza.honarjo.Controller.DBUser.UserRepository;
+import com.example.reza.honarjo.Controller.alarmController.AlarmReceiver;
 import com.example.reza.honarjo.Controller.alarmSetter.AlarmSetter;
 import com.example.reza.honarjo.Controller.prefrence.PreferenceManager;
 import com.example.reza.honarjo.Controller.timeConverter.TimeConverter;
@@ -44,6 +53,10 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class MainActivity extends AppCompatActivity {
 
     public static final String NOTIFICATION_CHANNEL_ID = "my_channel_id_01";
+    private static final int PERMISSION_REQUEST_WAKE_LOCK = 1;
+    private static final int PERMISSION_REQUEST_DISABLE_KEYGUARD = 2;
+    private static final int PERMISSION_REQUEST_VIBRATE = 3;
+    private static final int PERMISSION_REQUEST_RECEIVE_BOOT_COMPLETED = 4;
     public static MainActivity mainActivity;
     List<DBUSer> users;
     PreferenceManager preferenceManager;
@@ -52,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     List<DBAlarm> alarms;
     private String TAG = "MainActivity";
     private AlarmSetter alarmSetter;
+    BroadcastReceiver br;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +73,104 @@ public class MainActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        mainActivity = this;
+        askForPermissions();
+    }
+
+    private void askForPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WAKE_LOCK) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                        Manifest.permission.WAKE_LOCK)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("دسترسی مورد نیاز است");
+                    builder.setPositiveButton(android.R.string.ok, null);
+                    builder.setMessage("لطفا تایید کنید");
+                    builder.setOnDismissListener(dialog -> requestPermissions(
+                            new String[]
+                                    {Manifest.permission.WAKE_LOCK}
+                            , PERMISSION_REQUEST_WAKE_LOCK));
+                    builder.show();
+                } else {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.WAKE_LOCK},
+                            PERMISSION_REQUEST_WAKE_LOCK);
+                }
+            } else {
+                start();
+            }
+
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.DISABLE_KEYGUARD) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                        Manifest.permission.DISABLE_KEYGUARD)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("دسترسی مورد نیاز است");
+                    builder.setPositiveButton(android.R.string.ok, null);
+                    builder.setMessage("لطفا تایید کنید");
+                    builder.setOnDismissListener(dialog -> requestPermissions(
+                            new String[]
+                                    {Manifest.permission.DISABLE_KEYGUARD}
+                            , PERMISSION_REQUEST_DISABLE_KEYGUARD));
+                    builder.show();
+                } else {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.DISABLE_KEYGUARD},
+                            PERMISSION_REQUEST_DISABLE_KEYGUARD);
+                }
+            } else {
+                start();
+            }
+
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.VIBRATE) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                        Manifest.permission.VIBRATE)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("دسترسی مورد نیاز است");
+                    builder.setPositiveButton(android.R.string.ok, null);
+                    builder.setMessage("لطفا تایید کنید");
+                    builder.setOnDismissListener(dialog -> requestPermissions(
+                            new String[]
+                                    {Manifest.permission.VIBRATE}
+                            , PERMISSION_REQUEST_VIBRATE));
+                    builder.show();
+                } else {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.VIBRATE},
+                            PERMISSION_REQUEST_VIBRATE);
+                }
+            } else {
+                start();
+            }
+
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECEIVE_BOOT_COMPLETED) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                        Manifest.permission.RECEIVE_BOOT_COMPLETED)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("دسترسی مورد نیاز است");
+                    builder.setPositiveButton(android.R.string.ok, null);
+                    builder.setMessage("لطفا تایید کنید");
+                    builder.setOnDismissListener(dialog -> requestPermissions(
+                            new String[]
+                                    {Manifest.permission.RECEIVE_BOOT_COMPLETED}
+                            , PERMISSION_REQUEST_RECEIVE_BOOT_COMPLETED));
+                    builder.show();
+                } else {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.RECEIVE_BOOT_COMPLETED},
+                            PERMISSION_REQUEST_RECEIVE_BOOT_COMPLETED);
+                }
+            } else {
+                start();
+            }
+        } else {
+            start();
+        }
+    }
+
+    private void start() {
+
         setContentView(R.layout.activity_main);
         createNotificationChannel();
-        mainActivity = this;
         alarmSetter = new AlarmSetter(getApplicationContext());
         findViewById(R.id.main_content_users).setOnClickListener(v -> {
             Intent myIntent = new Intent(getApplicationContext(), UserListActivity.class);
@@ -80,8 +189,17 @@ public class MainActivity extends AppCompatActivity {
             startActivity(myIntent);
         });
         preferenceManager = new PreferenceManager(getApplicationContext());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            br = new AlarmReceiver();
+            IntentFilter filter = new IntentFilter("ACTION.BROADCAST");
+            filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+            this.registerReceiver(br, filter);
+        }
         if (preferenceManager.inc() == -1) {
             preferenceManager.setInc(2);
+        }
+        if (preferenceManager.getUserCode() == -1) {
+            preferenceManager.setUserCode(1);
         }
         insuranceRepository = new InsuranceRepository(getApplication());
         userRepository = new UserRepository(getApplication());
@@ -152,9 +270,10 @@ public class MainActivity extends AppCompatActivity {
                 Date brownDay = !obj.isNull("brownDay") ? getDate(obj.getJSONObject("brownDay")) : null;
                 Date blackDay = !obj.isNull("blackDay") ? getDate(obj.getJSONObject("blackDay")) : null;
                 boolean _private = obj.getBoolean("private");
-                int code = obj.getInt("code");
+                int code = preferenceManager.getUserCode();
+                result.add(new DBUSer(code, name, family, mobileNumber, registerDay, expireDay, yellowDay, orangeDay, greenDay, blueDay, brownDay, blackDay, _private, code));
+                code++;
                 preferenceManager.setUserCode(code);
-                result.add(new DBUSer(name, family, mobileNumber, registerDay, expireDay, yellowDay, orangeDay, greenDay, blueDay, brownDay, blackDay, _private, code));
                 Log.e(TAG, "Add to db" + i);
             }
         } catch (JSONException e) {
@@ -172,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
             Calendar comparable2 = Calendar.getInstance();
             Calendar temp = Calendar.getInstance();
             temp.setTime(new Date());
-            temp.set(2019,6,4, 0, 0, 0);
+            temp.set(2019, 6, 4, 0, 0, 0);
             DBAlarm information2 = new DBAlarm();
             information2.setMyDate(temp.getTime());
             for (int i = 0; i < dates.size(); i++) {
@@ -253,6 +372,58 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_WAKE_LOCK: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    start();
+                } else {
+                    Toast.makeText(MainActivity.this, "دسترسی داده نشد.", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+            case PERMISSION_REQUEST_DISABLE_KEYGUARD: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    start();
+                } else {
+                    Toast.makeText(MainActivity.this, "دسترسی داده نشد.", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+            case PERMISSION_REQUEST_VIBRATE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    start();
+                } else {
+                    Toast.makeText(MainActivity.this, "دسترسی داده نشد.", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+            case PERMISSION_REQUEST_RECEIVE_BOOT_COMPLETED: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    start();
+                } else {
+                    Toast.makeText(MainActivity.this, "دسترسی داده نشد.", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
+
+    @Override
+    protected void onPause() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            unregisterReceiver(br);
+        }
+        super.onPause();
+    }
+    @Override
+    protected void onDestroy() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            unregisterReceiver(br);
+        }
+        super.onDestroy();
+    }
 }
 
 

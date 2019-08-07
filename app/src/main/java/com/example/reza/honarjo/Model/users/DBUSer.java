@@ -16,7 +16,7 @@ import static com.example.reza.honarjo.Controller.timeConverter.TimeConverter.ge
 @Entity(tableName = "users")
 @TypeConverters({DateConverter.class})
 public class DBUSer implements Serializable {
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @NonNull
     private Integer _id;
     private String name;
@@ -37,7 +37,8 @@ public class DBUSer implements Serializable {
     }
 
     @Ignore
-    public DBUSer(String name, String family, String phoneNumber, Date registerDay, Date expireDay, Date yellowDay, Date orangeDay, Date greenDay, Date blueDay, Date brownDay, Date blackDay, boolean privateCheck,Integer code) {
+    public DBUSer(Integer Id,String name, String family, String phoneNumber, Date registerDay, Date expireDay, Date yellowDay, Date orangeDay, Date greenDay, Date blueDay, Date brownDay, Date blackDay, boolean privateCheck,Integer code) {
+        this._id = Id;
         this.name = name;
         this.family = family;
         this.phoneNumber = phoneNumber;

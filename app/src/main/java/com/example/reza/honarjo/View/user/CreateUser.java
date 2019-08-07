@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -296,7 +297,8 @@ public class CreateUser extends AppCompatActivity {
         if (!TextUtils.isEmpty(blackYear.getText())) {
             _blackYear = Integer.parseInt(blackYear.getText().toString());
         }
-        return new DBUSer(_name, _family, _phoneNumber,
+        int code =preferenceManager.getUserCode();
+        DBUSer dbuSer = new DBUSer(code,_name, _family, _phoneNumber,
                 ((_registerYear == 0) && (_registerMonth == 0) && (_registerDay == 0)) ?
                         null : getDate(_registerYear, _registerMonth, _registerDay),
                 ((_expireYear == 0) && (_expireMonth == 0) && (_expireDay == 0)) ?
@@ -320,7 +322,11 @@ public class CreateUser extends AppCompatActivity {
                 ((_blackYear == 0) && (_blackMonth == 0) && (_blackDay == 0)) ?
                         null :
                         getDate(_blackYear, _blackMonth, _blackDay),
-                prv, preferenceManager.getUserCode()); //code must be edit
+                prv, code);
+        code++;
+        preferenceManager.setUserCode(code);
+        Log.e("Check code", String.valueOf(code));
+        return dbuSer; //code must be edit
     }
 
     private Date getDate(Integer item1, Integer item2, Integer item3) {

@@ -14,7 +14,7 @@ public class UserListConverter {
     private Gson gson = new Gson();
 
     @TypeConverter
-    List<ShowingUser> stringToSomeObjectList(String data) {
+    public List<ShowingUser> stringToSomeObjectList(String data) {
         if (data == null) {
             return Collections.emptyList();
         }
@@ -25,7 +25,7 @@ public class UserListConverter {
     }
 
     @TypeConverter
-    String someObjectListToString(List<ShowingUser> someObjects) {
+    public String someObjectListToString(List<ShowingUser> someObjects) {
         return gson.toJson(someObjects);
     }
 }
