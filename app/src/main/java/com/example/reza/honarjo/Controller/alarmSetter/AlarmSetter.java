@@ -5,15 +5,19 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.example.reza.honarjo.Controller.alarmController.AlarmReceiver;
 import com.example.reza.honarjo.Model.alarm.DBAlarm;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import static android.content.Intent.FILL_IN_DATA;
 
 public class AlarmSetter {
     private final String TAG = "AlarmSetter";
@@ -39,10 +43,25 @@ public class AlarmSetter {
                 cal_alarm.set(Calendar.MINUTE, 0);
                 cal_alarm.set(Calendar.SECOND, 0);
             }
-            Intent intent = new Intent(context, AlarmReceiver.class);
-            Bundle b = new Bundle();
-            b.putSerializable("Alarm", alarm);
-            intent.putExtras(b);
+            Intent intent = new Intent("MY.ACTION.ALARM");
+            intent.setClass(context, AlarmReceiver.class);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream out;
+            try {
+                out = new ObjectOutputStream(bos);
+                out.writeObject(alarm);
+                out.flush();
+                byte[] data = bos.toByteArray();
+                intent.putExtra("Alarm", data);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    bos.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
             PendingIntent pendingIntent;
             pendingIntent = PendingIntent.getBroadcast(context, alarm.getId(), intent, 0);
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -74,11 +93,28 @@ public class AlarmSetter {
             cal_alarm.set(Calendar.SECOND, 0);
         }
         Intent intent = new Intent(context, AlarmReceiver.class);
-        Bundle b = new Bundle();
-        b.putSerializable("Alarm", alarm);
-        intent.putExtras(b);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream out;
+        try {
+            out = new ObjectOutputStream(bos);
+            out.writeObject(alarm);
+            out.flush();
+            byte[] data = bos.toByteArray();
+            intent.putExtra("Alarm", data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                bos.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+//        Bundle b = new Bundle();
+//        b.putSerializable("Alarm", alarm);
+//        intent.putExtras(b);
         PendingIntent pendingIntent;
-        pendingIntent = PendingIntent.getBroadcast(context, alarm.getId(), intent, 0);
+        pendingIntent = PendingIntent.getBroadcast(context, alarm.getId(), intent, FILL_IN_DATA);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Log.e(TAG, "Set to: " + cal_alarm.getTime().toString());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {

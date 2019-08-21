@@ -53,7 +53,7 @@
             android:exported="true"
             android:process=":remote">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="MY.ACTION.ALARM" />
             </intent-filter>
         </receiver>
         <receiver
@@ -63,6 +63,7 @@
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+
             </intent-filter>
         </receiver>
 
@@ -72,6 +73,10 @@
         <service
             android:name=".Controller.alarmController.AlarmGroupBackgroundService"
             android:enabled="true" />
+        <service
+            android:name=".Controller.alarmController.android28.MyJobIntent"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
     </application>
 
 </manifest>
