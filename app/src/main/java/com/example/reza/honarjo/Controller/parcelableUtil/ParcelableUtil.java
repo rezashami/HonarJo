@@ -1,28 +1,67 @@
 package com.example.reza.honarjo.Controller.parcelableUtil;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.util.Log;
+
+import com.example.reza.honarjo.Model.alarm.DBAlarm;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class ParcelableUtil {
-    public static byte[] marshall(Parcelable parcelable) {
-        Parcel parcel = Parcel.obtain();
-        parcelable.writeToParcel(parcel, 0);
-        byte[] bytes = parcel.marshall();
-        parcel.recycle();
-        return bytes;
+    private static final String TAG = ParcelableUtil.class.getName();
+    public static byte[] toByteArray(DBAlarm alarm) {
+        if (alarm == null) {
+            Log.e(TAG, "alarm is null");
+            return null;
+        }
+        byte[] data = null;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream out;
+        try {
+            out = new ObjectOutputStream(bos);
+            out.writeObject(alarm);
+            out.flush();
+            data = bos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                bos.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return data;
     }
 
-    public static Parcel unMarshall(byte[] bytes) {
-        Parcel parcel = Parcel.obtain();
-        parcel.unmarshall(bytes, 0, bytes.length);
-        parcel.setDataPosition(0); // This is extremely important!
-        return parcel;
-    }
-
-    public static <T> T unMarshall(byte[] bytes, Parcelable.Creator<T> creator) {
-        Parcel parcel = unMarshall(bytes);
-        T result = creator.createFromParcel(parcel);
-        parcel.recycle();
-        return result;
+    public static DBAlarm getFromByteArray(byte[] data) {
+        if (data == null) {
+            Log.e(TAG, "Byte array is null");
+            return null;
+        }
+        ByteArrayInputStream bis = new ByteArrayInputStream(data);
+        ObjectInput in = null;
+        DBAlarm dbAlarm = null;
+        try {
+            in = new ObjectInputStream(bis);
+            dbAlarm = (DBAlarm) in.readObject();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return dbAlarm;
     }
 }

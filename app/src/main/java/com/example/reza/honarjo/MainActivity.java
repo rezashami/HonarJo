@@ -33,10 +33,6 @@ import com.example.reza.honarjo.View.user.UserListActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
@@ -60,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     InsuranceRepository insuranceRepository;
     UserRepository userRepository;
     List<DBAlarm> alarms;
-    private String TAG = "MainActivity";
+    private String TAG = MainActivity.class.getSimpleName();
     private AlarmSetter alarmSetter;
 
     public static boolean hasPermissions(Context context, String... permissions) {
@@ -81,9 +77,7 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mainActivity = this;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            askForPermissions();
-        }
+        askForPermissions();
     }
 
     private void askForPermissions() {
@@ -133,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         insuranceRepository = new InsuranceRepository(getApplication());
         userRepository = new UserRepository(getApplication());
         if (!preferenceManager.FirstLaunch()) {
-            users = getUSersss();
+            users = getUsers();
             Log.e(TAG, "Insert Finished");
             preferenceManager.setFirstTimeLaunch(true);
             userRepository.insertMany(users);
@@ -166,20 +160,19 @@ public class MainActivity extends AppCompatActivity {
         return json;
     }
 
-    Date getDate(JSONObject obj) {
-        int year = 0;
-        int month = 0;
-        int day = 0;
-        try {
-            year = obj.getInt("year");
-            month = obj.getInt("month");
-            day = obj.getInt("day");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return TimeConverter.getGEOTime(year, month, day);
-    }
-
+//    Date getDate(JSONObject obj) {
+//        int year = 0;
+//        int month = 0;
+//        int day = 0;
+//        try {
+//            year = obj.getInt("year");
+//            month = obj.getInt("month");
+//            day = obj.getInt("day");
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return TimeConverter.getGEOTime(year, month, day);
+//    }
 
     Date getDates(DateModel obj) {
         int year = 0;
@@ -193,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
         return TimeConverter.getGEOTime(year, month, day);
     }
 
-    List<DBUSer> getUSersss() {
+    List<DBUSer> getUsers() {
         List<DBUSer> result = new ArrayList<>();
         Type listType = new TypeToken<ArrayList<ReadingUser>>() {
         }.getType();
@@ -215,36 +208,36 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-    List<DBUSer> loadFromFile() {
-        List<DBUSer> result = new ArrayList<>();
-        try {
-            JSONArray total = new JSONArray(loadJSONFromAsset());
-            Log.e(TAG, String.valueOf(total.length()));
-            for (int i = 0; i < total.length(); i++) {
-                JSONObject obj = total.getJSONObject(i);
-                String name = obj.getString("name");
-                String family = obj.getString("family");
-                String mobileNumber = obj.getString("phoneNumber");
-                Date registerDay = !obj.isNull("registerDay") ? getDate(obj.getJSONObject("registerDay")) : null;
-                Date expireDay = !obj.isNull("expireDay") ? getDate(obj.getJSONObject("expireDay")) : null;
-                Date yellowDay = !obj.isNull("yellowDay") ? getDate(obj.getJSONObject("yellowDay")) : null;
-                Date orangeDay = !obj.isNull("orangeDay") ? getDate(obj.getJSONObject("orangeDay")) : null;
-                Date greenDay = !obj.isNull("greenDay") ? getDate(obj.getJSONObject("greenDay")) : null;
-                Date blueDay = !obj.isNull("blueDay") ? getDate(obj.getJSONObject("blueDay")) : null;
-                Date brownDay = !obj.isNull("brownDay") ? getDate(obj.getJSONObject("brownDay")) : null;
-                Date blackDay = !obj.isNull("blackDay") ? getDate(obj.getJSONObject("blackDay")) : null;
-                boolean _private = obj.getBoolean("private");
-                int code = preferenceManager.getUserCode();
-                result.add(new DBUSer(code, name, family, mobileNumber, registerDay, expireDay, yellowDay, orangeDay, greenDay, blueDay, brownDay, blackDay, _private, code));
-                code++;
-                preferenceManager.setUserCode(code);
-                Log.e(TAG, "Add to db" + i);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
+//    List<DBUSer> loadFromFile() {
+//        List<DBUSer> result = new ArrayList<>();
+//        try {
+//            JSONArray total = new JSONArray(loadJSONFromAsset());
+//            Log.e(TAG, String.valueOf(total.length()));
+//            for (int i = 0; i < total.length(); i++) {
+//                JSONObject obj = total.getJSONObject(i);
+//                String name = obj.getString("name");
+//                String family = obj.getString("family");
+//                String mobileNumber = obj.getString("phoneNumber");
+//                Date registerDay = !obj.isNull("registerDay") ? getDate(obj.getJSONObject("registerDay")) : null;
+//                Date expireDay = !obj.isNull("expireDay") ? getDate(obj.getJSONObject("expireDay")) : null;
+//                Date yellowDay = !obj.isNull("yellowDay") ? getDate(obj.getJSONObject("yellowDay")) : null;
+//                Date orangeDay = !obj.isNull("orangeDay") ? getDate(obj.getJSONObject("orangeDay")) : null;
+//                Date greenDay = !obj.isNull("greenDay") ? getDate(obj.getJSONObject("greenDay")) : null;
+//                Date blueDay = !obj.isNull("blueDay") ? getDate(obj.getJSONObject("blueDay")) : null;
+//                Date brownDay = !obj.isNull("brownDay") ? getDate(obj.getJSONObject("brownDay")) : null;
+//                Date blackDay = !obj.isNull("blackDay") ? getDate(obj.getJSONObject("blackDay")) : null;
+//                boolean _private = obj.getBoolean("private");
+//                int code = preferenceManager.getUserCode();
+//                result.add(new DBUSer(code, name, family, mobileNumber, registerDay, expireDay, yellowDay, orangeDay, greenDay, blueDay, brownDay, blackDay, _private, code));
+//                code++;
+//                preferenceManager.setUserCode(code);
+//                Log.e(TAG, "Add to db" + i);
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
 
     List<DBAlarm> fetchAlarmModel() {
         List<DBAlarm> result = new ArrayList<>();
@@ -339,11 +332,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == PERMISSION_REQUEST_ALL) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                    && grantResults[1] == PackageManager.PERMISSION_GRANTED
-                    && grantResults[2] == PackageManager.PERMISSION_GRANTED
-                    && grantResults[3] == PackageManager.PERMISSION_GRANTED) {
-                start();
+            boolean flag = true;
+            if (grantResults.length > 0) {
+                for (int item : grantResults) {
+                    if (item != PackageManager.PERMISSION_GRANTED) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (!flag) {
+                    start();
+                } else {
+                    Toast.makeText(MainActivity.this, "دسترسی داده نشد.", Toast.LENGTH_LONG).show();
+                }
             } else {
                 Toast.makeText(MainActivity.this, "دسترسی داده نشد.", Toast.LENGTH_LONG).show();
             }
