@@ -14,19 +14,27 @@ import com.example.reza.honarjo.Controller.DBInsurance.InsuranceViewModel;
 import com.example.reza.honarjo.Controller.insuranceRecyclerAdapter.InsuranceRecyclerAdapter;
 import com.example.reza.honarjo.R;
 
+import java.util.Objects;
+
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class InsuranceListActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
 
-
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insurance_list);
         Toolbar toolbar =  findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         final InsuranceRecyclerAdapter adapter = new InsuranceRecyclerAdapter( this, item -> {
             Intent myIntent = new Intent(getApplicationContext(), ShowInsurance.class);
             myIntent.putExtra("Insurance",item);

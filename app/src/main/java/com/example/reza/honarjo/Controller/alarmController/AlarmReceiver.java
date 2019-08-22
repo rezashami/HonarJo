@@ -10,8 +10,6 @@ import com.example.reza.honarjo.Controller.alarmController.android28.MyJobIntent
 
 public class AlarmReceiver extends BroadcastReceiver {
     Context myContext;
-    private static final String TAG = AlarmReceiver.class.getSimpleName();
-
     @Override
     public void onReceive(Context context, Intent intent) {
         this.myContext = context;

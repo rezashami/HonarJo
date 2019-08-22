@@ -15,17 +15,27 @@ import com.example.reza.honarjo.Controller.loggerRecyclerAdapter.LoggerRecyclerA
 import com.example.reza.honarjo.Model.logger.DBLogger;
 import com.example.reza.honarjo.R;
 
+import java.util.Objects;
+
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class LoggerListActivity extends AppCompatActivity {
     public static final int SHOW_REPORT_REQUEST_CODE = 32;
     private LoggerViewModel loggerViewModel;
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
         Toolbar toolbar =  findViewById(R.id.logger_toolbar);
         setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         RecyclerView recyclerView = findViewById(R.id.logger_content_recycler);
         final LoggerRecyclerAdapter adapter = new LoggerRecyclerAdapter( this, item -> {
             Intent myIntent = new Intent(getApplicationContext(), ShowLogger.class);

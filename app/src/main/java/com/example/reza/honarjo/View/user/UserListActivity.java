@@ -28,6 +28,7 @@ import com.example.reza.honarjo.Model.users.DBUSer;
 import com.example.reza.honarjo.Model.users.ShowingUser;
 import com.example.reza.honarjo.R;
 
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -46,14 +47,19 @@ public class UserListActivity extends AppCompatActivity {
     private LocalRecyclerAdapter adapter;
     PreferenceManager preferenceManager;
     private InsuranceRepository insuranceRepository;
-
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
             Intent myIntent = new Intent(getApplicationContext(), CreateUser.class);
@@ -63,7 +69,6 @@ public class UserListActivity extends AppCompatActivity {
         adapter = new LocalRecyclerAdapter(this, item -> {
             Intent myIntent = new Intent(getApplicationContext(), ShowUser.class);
             myIntent.putExtra("User", item);
-            //startActivityForResult(myIntent,MEDICINE_WORK_ACTIVITY_REQUEST_CODE);
             startActivity(myIntent);
         });
 

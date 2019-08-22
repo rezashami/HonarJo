@@ -23,6 +23,7 @@ import com.example.reza.honarjo.Model.users.DBUSer;
 import com.example.reza.honarjo.R;
 
 import java.util.Date;
+import java.util.Objects;
 
 import saman.zamani.persiandate.PersianDate;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -43,7 +44,11 @@ public class CreateUser extends AppCompatActivity {
     private UserRepository userRepository;
 
     PreferenceManager preferenceManager;
-
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +56,8 @@ public class CreateUser extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.create_user_toolbar);
         setSupportActionBar(toolbar);
         setTitle("افزودن کاربر");
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         preferenceManager = new PreferenceManager(getApplicationContext());
         name = findViewById(R.id.create_user_name);
         family = findViewById(R.id.create_user_family);

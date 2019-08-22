@@ -23,6 +23,7 @@ import com.example.reza.honarjo.Model.users.DBUSer;
 import com.example.reza.honarjo.R;
 
 import java.util.Date;
+import java.util.Objects;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -55,6 +56,8 @@ public class EditUser extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.edit_user_toolbar);
         setSupportActionBar(toolbar);
         setTitle("تغییر اطلاعات کاربر");
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         preferenceManager = new PreferenceManager(getApplication());
         userRepository = new UserRepository(getApplication());
         Bundle b = this.getIntent().getExtras();
@@ -229,7 +232,11 @@ public class EditUser extends AppCompatActivity {
         return flag;
     }
 
-
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
     private DBUSer getUser() {
         String _name = name.getText().toString();
         String _family = family.getText().toString();

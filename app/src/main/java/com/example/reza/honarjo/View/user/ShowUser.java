@@ -27,6 +27,7 @@ import com.example.reza.honarjo.Model.users.ShowingUser;
 import com.example.reza.honarjo.R;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import saman.zamani.persiandate.PersianDate;
@@ -45,7 +46,11 @@ public class ShowUser extends AppCompatActivity {
     InsuranceRepository insuranceRepository;
     TextView nameFamily, phoneNumber, registerDay, expireDay, yellowDay, orangeDay, greenDay, blueDay, brownDay, blackDay, privateCheck;
     PreferenceManager preferenceManager;
-
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +58,8 @@ public class ShowUser extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.show_user_toolbar);
         setSupportActionBar(toolbar);
         setTitle("اطلاعات کاربری");
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         userRepository = new UserRepository(getApplication());
         insuranceRepository = new InsuranceRepository(getApplication());
         preferenceManager = new PreferenceManager(getApplicationContext());

@@ -23,6 +23,7 @@ import com.example.reza.honarjo.View.user.ShowUser;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -31,7 +32,11 @@ import static com.example.reza.honarjo.Controller.timeConverter.TimeConverter.ge
 public class ShowInsurance extends AppCompatActivity {
     private DBAlarm dbAlarm;
     private LocalRecyclerAdapter adapter;
-
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +44,8 @@ public class ShowInsurance extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.show_insurance_toolbar);
         setSupportActionBar(toolbar);
         setTitle("نمایش بیمه");
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         Bundle b = this.getIntent().getExtras();
         if (b != null) {
             dbAlarm = (DBAlarm) b.getSerializable("Insurance");

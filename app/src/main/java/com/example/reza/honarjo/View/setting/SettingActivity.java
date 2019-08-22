@@ -9,10 +9,17 @@ import android.widget.Toast;
 
 import com.example.reza.honarjo.R;
 
+import java.util.Objects;
+
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class SettingActivity extends AppCompatActivity {
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,6 +27,8 @@ public class SettingActivity extends AppCompatActivity {
         Toolbar toolbar =  findViewById(R.id.setting_toolbar);
         setSupportActionBar(toolbar);
         setTitle("صفحه تنظیمات");
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         findViewById(R.id.setting_exit_btn).setOnClickListener(v -> new AlertDialog.Builder(SettingActivity.this, R.style.MyAlertDialogStyle)
                 .setTitle("خروج از برنامه")
                 .setMessage("آیا مطمئن هستید؟")

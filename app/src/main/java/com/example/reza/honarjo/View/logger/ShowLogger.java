@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.example.reza.honarjo.Model.logger.DBLogger;
 import com.example.reza.honarjo.R;
 
+import java.util.Objects;
+
 import saman.zamani.persiandate.PersianDate;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -21,7 +23,11 @@ public class ShowLogger extends AppCompatActivity {
     public static final int REPORT_DELETE_RESULT_CODE = 32;
     DBLogger logger;
     TextView txt_header, txt_body, txt_date;
-
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +35,8 @@ public class ShowLogger extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.show_logger_toolbar);
         setSupportActionBar(toolbar);
         setTitle("مشاهده سابقه");
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         txt_header = findViewById(R.id.logger_header_show);
         txt_body = findViewById(R.id.logger_body_show);
         txt_date = findViewById(R.id.logger_date_show);
